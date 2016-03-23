@@ -13,10 +13,10 @@ sh -c "$(curl -fsSL https://raw.githubusercontent.com/sai-prasanna/dotfiles/mast
 
 ```shell
 sh -c "$(wget https://raw.githubusercontent.com/sai-prasanna/dotfiles/master/install.sh -O -)"
+```
 
 
 ## Additional Dependencies
-
 ### Vim 
 
     yaourt -S ack ctags                  # ArchLinux
