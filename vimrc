@@ -14,12 +14,12 @@ syntax on
 "--------
 " color scheme
 set background=dark
-color solarized
+color monokai
 
 " highlight current line
-au WinLeave * set nocursorline nocursorcolumn
-au WinEnter * set cursorline cursorcolumn
-set cursorline cursorcolumn
+"au WinLeave * set nocursorline nocursorcolumn
+"au WinEnter * set cursorline cursorcolumn
+"set cursorline cursorcolumn
 
 " search
 set incsearch
@@ -147,7 +147,6 @@ let NERDTreeChDirMode=2
 let NERDTreeIgnore=['\~$', '\.pyc$', '\.swp$']
 " let NERDTreeSortOrder=['^__\.py$', '\/$', '*', '\.swp$',  '\~$']
 let NERDTreeShowBookmarks=1
-let NERDTreeWinPos = "right"
 
 " nerdcommenter
 let NERDSpaceDelims=1
@@ -209,6 +208,10 @@ nnoremap <leader>v V`]
 "------------------
 " Useful Functions
 "------------------
+
+inoremap jk <esc>
+
+
 " easier navigation between split windows
 nnoremap <c-j> <c-w>j
 nnoremap <c-k> <c-w>k
