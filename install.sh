@@ -4,7 +4,7 @@ mv ~/.vim ~/.vim.orig
 mv ~/.vimrc ~/.vimrc.orig
 mv ~/.zshrc ~/.zshrc.orig
 echo "Cloning Repo to ~/.dotfiles"
-#git clone https://github.com/sai-prasanna/dotfiles.git ~/.dotfiles
+git clone https://github.com/sai-prasanna/dotfiles.git ~/.dotfiles
 echo "Symlinking dotfiles, folders"
 ln -s ~/.dotfiles/zshrc ~/.zshrc
 ln -s ~/.dotfiles/.vim ~/.vim
