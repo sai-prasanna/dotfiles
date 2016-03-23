@@ -1,6 +1,7 @@
 #!/bin/sh
 echo "Backing up existing dotfiles"
-tar -zhcvf dotfilesbackup.tar.gz ~/.vim ~/.vimrc ~/.vimrc
+tar -zhcvf dotfilesbackup.tar.gz ~/.vim ~/.vimrc ~/.zshtc
+rm ~/.vim ~/.vimrc ~/.zshrc
 echo "Cloning Repo to ~/.dotfiles"
 git clone https://github.com/sai-prasanna/dotfiles.git ~/.dotfiles
 echo "Symlinking dotfiles, folders"
