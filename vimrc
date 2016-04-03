@@ -206,11 +206,17 @@ nnoremap <leader>a :Ack
 nnoremap <leader>v V`]
 
 "------------------
+" Backup and swap
+"------------------
+set backupdir=~/.vim/backup_files//
+set directory=~/.vim/swap_files//
+set undodir=~/.vim/undo_files//
+
+"------------------
 " Useful Functions
 "------------------
 
 inoremap jk <esc>
-
 
 " easier navigation between split windows
 nnoremap <c-j> <c-w>j
@@ -251,7 +257,6 @@ nnoremap ; :
 " for macvim
 if has("gui_running")
     set go=aAce  " remove toolbar
-    "set transparency=30
     set guifont=Monaco:h13
     set showtabline=2
     set columns=140
