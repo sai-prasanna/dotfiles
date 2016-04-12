@@ -1,14 +1,13 @@
 #!/bin/sh
 echo "Backing up existing dotfiles"
-tar -zhcvf dotfilesbackup.tar.gz ~/.vim ~/.vimrc ~/.zshrc ~/.emacs
-rm  ~/.vim ~/.vimrc ~/.zshrc ~/.emacs
+tar -zhcvf dotfilesbackup.tar.gz ~/.vim ~/.vimrc ~/.zshrc ~/.emacs.d
+rm -ri  ~/.vim ~/.vimrc ~/.zshrc ~/.emacs.d
 echo "Cloning Repo to ~/.dotfiles"
 git clone https://github.com/sai-prasanna/dotfiles.git ~/.dotfiles
 echo "Symlinking dotfiles, folders"
 ln -s ~/.dotfiles/zshrc ~/.zshrc
 ln -s ~/.dotfiles/.vim ~/.vim
-ln -s ~/.dotfiles/vimrc ~/.vimrc
-ln -s ~/.dotfiles/emacs ~/.emacs
+ln -s ~/.dotfiles/emacs.d ~/.emacs.d
 echo "Downloading vundle"
 git clone https://github.com/gmarik/vundle.git ~/.dotfiles/.vim/bundle/vundle
 echo "Installing Plugins"
