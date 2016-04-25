@@ -70,6 +70,15 @@
     
     ;; monokai theme
     monokai-theme
+
+    ;;Auto complete mode
+    company
+    
+    ;; Tern javascript completion
+    company-tern
+
+    ;; Javascript 2 mode
+    js2-mode
     ))
 
 ;; On OS X, an Emacs instance started from the graphical user
