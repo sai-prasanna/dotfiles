@@ -76,9 +76,9 @@
     
     ;; Tern javascript completion
     company-tern
-
-    ;; Javascript 2 mode
-    js2-mode
+    
+    ;; Web mode
+    web-mode
     ))
 
 ;; On OS X, an Emacs instance started from the graphical user
