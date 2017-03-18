@@ -8,8 +8,8 @@
              '("marmalade" . "http://marmalade-repo.org/packages/") t)
 (add-to-list 'package-archives
              '("tromey" . "http://tromey.com/elpa/") t)
-(add-to-list 'package-archives
-             '("MELPA Stable" . "http://stable.melpa.org/packages/") t)
+;(add-to-list 'package-archives
+;             '("MELPA Stable" . "http://stable.melpa.org/packages/") t)
 (add-to-list 'package-archives
              '("melpa" . "http://melpa.milkbox.net/packages/") t)
 
@@ -24,6 +24,21 @@
 ;; makes them available for download.
 (when (not package-archive-contents)
   (package-refresh-contents))
+
+;; Download the ELPA archive description if needed.
+;; This informs Emacs about the latest versions of all packages, and
+;; makes them available for download.
+(when (not package-archive-contents)
+  (package-refresh-contents))
+
+;; Define he following variables to remove the compile-log warnings
+;; when defining ido-ubiquitous
+(defvar ido-cur-item nil)
+(defvar ido-default-item nil)
+(defvar ido-cur-list nil)
+(defvar predicate nil)
+(defvar inherit-input-method nil)
+
 
 ;; The packages you want installed. You can also install these
 ;; manually with M-x package-install
