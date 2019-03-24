@@ -8,7 +8,13 @@ plugins=(git)
 
 source $ZSH/oh-my-zsh.sh
 export LANG=en_US.UTF-8
+export LC_ALL=en_US.UTF-8
 
+# Editor Setup
+
+export ALTERNATE_EDITOR=""
+export EDITOR="emacsclient -t"                  # $EDITOR opens in terminal
+export VISUAL="emacsclient -c -a emacs"         # $VISUAL opens in GUI mode
 
 # added by Miniconda3 4.5.12 installer
 # >>> conda init >>>
