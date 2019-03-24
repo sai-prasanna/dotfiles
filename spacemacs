@@ -317,6 +317,7 @@ you should place your code here."
     (setq linum-format (concat linum-format " ")))
   (unless (display-graphic-p)
     (setq linum-relative-format (concat linum-relative-format " ")))
+  (setq term-char-mode-point-at-process-mark nil)
   )
 
 ;; Do not write anything past this comment. This is where Emacs will
