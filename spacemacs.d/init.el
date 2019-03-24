@@ -315,8 +315,6 @@ explicitly specified that a variable should be set before a package is loaded,
 you should place your code here."
   (unless (display-graphic-p)
     (setq linum-format (concat linum-format " ")))
-  (unless (display-graphic-p)
-    (setq linum-relative-format (concat linum-relative-format " ")))
   (setq term-char-mode-point-at-process-mark nil)
   )
 
