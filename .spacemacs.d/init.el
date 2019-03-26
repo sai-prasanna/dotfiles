@@ -46,6 +46,7 @@ values."
      org
      themes-megapack
      (shell :variables
+            shell-default-shell 'multi-term
             shell-default-height 30
             shell-default-position 'bottom)
      ;; spell-checking
@@ -315,7 +316,6 @@ explicitly specified that a variable should be set before a package is loaded,
 you should place your code here."
   (unless (display-graphic-p)
     (setq linum-format (concat linum-format " ")))
-  (setq term-char-mode-point-at-process-mark nil)
   )
 
 ;; Do not write anything past this comment. This is where Emacs will

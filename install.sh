@@ -13,6 +13,6 @@ git clone https://github.com/syl20bnr/spacemacs ~/.emacs.d
 
 
 echo "Symlinking dotfiles, folders"
-ln -s ~/.dotfiles/zshrc ~/.zshrc
-ln -s ~/.dotfiles/tmux.conf ~/.tmux.conf
-ln -s ~/.dotfiles/spacemacs.d ~/.spacemacs.d
+ln -s ~/.dotfiles/.zshrc ~/.zshrc
+ln -s ~/.dotfiles/.tmux.conf ~/.tmux.conf
+ln -s ~/.dotfiles/.spacemacs.d ~/.spacemacs.d
