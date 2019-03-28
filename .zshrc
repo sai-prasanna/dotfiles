@@ -1,7 +1,6 @@
 # Zsh stuff
 export ZSH=~/.oh-my-zsh
 ZSH_THEME="robbyrussell"
-ENABLE_CORRECTION="true"
 plugins=(git vi-mode)
 source $ZSH/oh-my-zsh.sh
 
@@ -13,7 +12,7 @@ export LC_ALL=en_US.UTF-8
 
 # Terminal
 export TERM=xterm-256color
-bindkey -M viins 'jj' vi-cmd-mode # vi mode (already activated using oh my zsh plugin)
+bindkey -M viins 'jk' vi-cmd-mode # vi mode (already activated using oh my zsh plugin)
 
 precmd() { RPROMPT="" }
 function zle-line-init zle-keymap-select {
