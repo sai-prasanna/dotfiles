@@ -47,6 +47,7 @@ values."
      themes-megapack
      (shell :variables
             shell-default-shell 'multi-term
+            shell-default-term-shell "/bin/zsh"
             shell-default-height 30
             shell-default-position 'bottom)
      ;; spell-checking
@@ -316,6 +317,22 @@ explicitly specified that a variable should be set before a package is loaded,
 you should place your code here."
   (unless (display-graphic-p)
     (setq linum-format (concat linum-format " ")))
+  (setq multi-term-program "/bin/zsh")
+  (setq python-shell-interpreter "ipython")
+  (setq python-shell-interpreter-args "--simple-prompt -i")
+  (defun git-gutter+-remote-default-directory (dir file)
+    ;;; Fixes Issue in tramp with git gutter
+    (let* ((vec (tramp-dissect-file-name file))
+           (method (tramp-file-name-method vec))
+           (user (tramp-file-name-user vec))
+           (domain (tramp-file-name-domain vec))
+           (host (tramp-file-name-host vec))
+           (port (tramp-file-name-port vec)))
+      (tramp-make-tramp-file-name method user domain host port dir)))
+  (defun git-gutter+-remote-file-path (dir file)
+    ;;; Fixes issue in tramp with git gutter
+    (let ((file (tramp-file-name-localname (tramp-dissect-file-name file))))
+      (replace-regexp-in-string (concat "\\`" dir) "" file)))
   )
 
 ;; Do not write anything past this comment. This is where Emacs will
