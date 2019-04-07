@@ -54,6 +54,7 @@ This function should only modify configuration layer settings."
                treemacs-use-filewatch-mode t)
      org
      (shell :variables
+            shell-default-term 'multi-term
             shell-default-term-shell "/bin/zsh"
             shell-default-height 30
             shell-default-position 'bottom)
