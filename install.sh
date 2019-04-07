@@ -7,9 +7,10 @@ fi
 echo "Backing up existing dotfiles"
 tar -zcvf dotfilesbackup.tar.gz  ~/.zshrc ~/.emacs.d ~/.tmux.conf ~/.spacemacs.d
 rm -ri ~/.zshrc ~/.emacs.d ~/.tmux.conf ~/.spacemacs ~/.spacemacs.d
+
 echo "Cloning Repo to ~/.dotfiles"
 git clone  https://github.com/sai-prasanna/dotfiles.git ~/.dotfiles
-git clone https://github.com/syl20bnr/spacemacs ~/.emacs.d
+git clone -b develop https://github.com/syl20bnr/spacemacs ~/.emacs.d
 
 
 echo "Symlinking dotfiles, folders"

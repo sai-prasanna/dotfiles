@@ -22,3 +22,7 @@ Session.vim
 bundle
 elpa/
 backups/
+
+# Spacemacs
+
+.spacemacs.env/

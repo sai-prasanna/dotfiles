@@ -8,6 +8,7 @@ source $ZSH/oh-my-zsh.sh
 
 # Language
 export LANG=en_US.UTF-8
+export LC_CTYPE=en_US.UTF-8
 export LC_ALL=en_US.UTF-8
 
 # Terminal
@@ -33,4 +34,4 @@ alias emacs="$EDITOR"
 
 # Python
 export PATH="~/miniconda3/bin":$PATH
-
+export WORKON_HOME="~/miniconda3/envs"
