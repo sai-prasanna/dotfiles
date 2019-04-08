@@ -32,7 +32,11 @@ alias emacs="$EDITOR"
 
 # Python
 export WORKON_HOME="~/miniconda3/envs"
-source /etc/profile.d/conda.sh
+
+if [[ -f /etc/profile.d/conda.sh ]]
+then
+    source /etc/profile.d/conda.sh
+fi
 
 # Emacs tramp fix
 if [[ "$TERM" == "dumb" ]]
