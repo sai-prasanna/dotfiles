@@ -12,7 +12,7 @@ This function should only modify configuration layer settings."
    dotspacemacs-distribution 'spacemacs
 
    ;; Lazy installation of layers (i.e. layers are installed only when a file
-   ;; with a supported type is opened). Possible values are `all', `unused'
+   ;; with a supported type is opened). Possible value `unused'
    ;; and `nil'. `unused' will lazy install only unused layers (i.e. layers
    ;; not listed in variable `dotspacemacs-configuration-layers'), `all' will
    ;; lazy install any layer that support lazy installation even the layers
@@ -465,20 +465,35 @@ This function is called at the very end of Spacemacs startup, after layer
 configuration.
 Put your configuration code here, except for variables that should be set
 before packages are loaded."
+  ;;===================== Python =============================
   ;; Set default interpreter to ipython
   (setq python-shell-interpreter "ipython")
   (setq python-shell-interpreter-args "--simple-prompt -i")
-  ;; Org Mode
+
+  ;;===================== SHELL =============================
+  ; Remember lots of previous commands in shell-mode
+  (setq comint-input-ring-size 100000)
+  (add-hook 'shell-mode-hook 'my-shell-mode-hook)
+  (defun my-shell-mode-hook ()
+    (setq comint-input-ring-file-name (tramp))
+    (setq comint-input-ring-file-name "~/.zsh_history")
+    ; Ignore timestamps in history file.  Assumes that zsh
+    ; EXTENDED_HISTORY option is in use.
+    (setq comint-input-ring-separator "\n: \\([0-9]+\\):\\([0-9]+\\);")
+    (comint-read-input-ring t))
+  ;;=====================  Org  ==============================
   (setq org-todo-keywords
         '((sequence "TODO" "WAITING" "|" "DONE" )))
 
+  ;; ==================== Tramp ==============================
+  ;; some speed hacks for tramp
   (setq remote-file-name-inhibit-cache nil)
   (setq vc-ignore-dir-regexp
         (format "%s\\|%s"
                 vc-ignore-dir-regexp
                 tramp-file-name-regexp))
   (setq tramp-verbose 1)
-
+  ;; Fix Git Gutter Bug in tramp mode
   (with-eval-after-load 'git-gutter+
     (defun git-gutter+-remote-default-directory (dir file)
       (let* ((vec (tramp-dissect-file-name file))
