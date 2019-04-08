@@ -33,5 +33,5 @@ export VISUAL="emacsclient -c -a="         # $VISUAL opens in GUI mode
 alias emacs="$EDITOR"
 
 # Python
-export PATH="~/miniconda3/bin":$PATH
 export WORKON_HOME="~/miniconda3/envs"
+source /etc/profile.d/conda.sh
