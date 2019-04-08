@@ -12,7 +12,6 @@ export LC_CTYPE=en_US.UTF-8
 export LC_ALL=en_US.UTF-8
 
 # Terminal
-export TERM=xterm-256color
 bindkey -M viins 'jk' vi-cmd-mode # vi mode (already activated using oh my zsh plugin)
 
 precmd() { RPROMPT="" }
@@ -25,7 +24,6 @@ function zle-line-init zle-keymap-select {
 zle -N zle-line-init
 zle -N zle-keymap-select
 
-
 # Editors - All Hail Emacs
 export ALTERNATE_EDITOR=""
 export EDITOR="emacsclient -t -c -a="      # $EDITOR opens in terminal
@@ -35,3 +33,14 @@ alias emacs="$EDITOR"
 # Python
 export WORKON_HOME="~/miniconda3/envs"
 source /etc/profile.d/conda.sh
+
+# Emacs tramp fix
+if [[ "$TERM" == "dumb" ]]
+then
+    unsetopt zle
+    unsetopt prompt_cr
+    unsetopt prompt_subst
+    unfunction precmd
+    unfunction preexec
+    PS1='$ '
+fi
