@@ -1,4 +1,5 @@
 # Zsh stuff
+
 export ZSH=~/.oh-my-zsh
 ZSH_THEME="robbyrussell"
 plugins=(git vi-mode)
@@ -39,12 +40,9 @@ then
 fi
 
 # Emacs tramp fix
-#if [[ "$TERM" == "dumb" ]]
-# then
-#     unsetopt zle
-#     unsetopt prompt_cr
-#     unsetopt prompt_subst
-#     unfunction precmd
-#     unfunction preexec
-#     PS1='$ '
-# fi
+if [[ "$TERM" == "dumb" ]]
+then
+  unsetopt zle
+  PS1='$ '
+fi
+
