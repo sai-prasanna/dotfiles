@@ -465,6 +465,11 @@ This function is called at the very end of Spacemacs startup, after layer
 configuration.
 Put your configuration code here, except for variables that should be set
 before packages are loaded."
+  ;;===================== Powerline =============================
+  ;;display time in powerline
+  (spaceline-define-segment datetime
+    (shell-command-to-string "echo -n $(date '+%a %d %b %I:%M%p')"))
+  (spaceline-spacemacs-theme 'datetime)
   ;;===================== Python =============================
   ;; Set default interpreter to ipython
   (setq python-shell-interpreter "ipython")
@@ -475,10 +480,10 @@ before packages are loaded."
   (setq comint-input-ring-size 100000)
   (add-hook 'shell-mode-hook 'my-shell-mode-hook)
   (defun my-shell-mode-hook ()
-    (setq comint-input-ring-file-name (tramp))
-    (setq comint-input-ring-file-name "~/.zsh_history")
-    ; Ignore timestamps in history file.  Assumes that zsh
-    ; EXTENDED_HISTORY option is in use.
+    (setq comint-input-ring-file-name
+          (substitute-in-file-name "~/.zsh_history"))
+    ;; Ignore timestamps in history file.  Assumes that zsh
+    ;; EXTENDED_HISTORY option is in use.
     (setq comint-input-ring-separator "\n: \\([0-9]+\\):\\([0-9]+\\);")
     (comint-read-input-ring t))
   ;;=====================  Org  ==============================
