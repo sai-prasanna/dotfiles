@@ -473,6 +473,7 @@ This function is called at the very end of Spacemacs startup, after layer
 configuration.
 Put your configuration code here, except for variables that should be set
 before packages are loaded."
+
   ;;===================== Powerline =============================
   ;;display time in powerline
   (display-time-mode 1)
@@ -497,7 +498,7 @@ before packages are loaded."
   ;; Copy from https://github.com/nickanderson/Level-up-your-notes-with-Org/blob/master/dot-spacemacs
   (setq org-startup-indented t)
   (setq org-todo-keywords
-        '((sequence "TODO" "WAIT" "|" "DONE" )))
+        '((sequence "TODO" "WAIT" "|" "DONE" "CANCELLED" )))
   ;; http://yenliangl.blogspot.com/2009/12/encrypt-your-important-data-in-emacs.html
   ;; http://emacs-fu.blogspot.com/2011/02/keeping-your-secrets-secret.html
   ;; This allows me to encrypt subtrees that are tagged with crypt automatically.
