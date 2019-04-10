@@ -489,7 +489,16 @@ before packages are loaded."
   (add-hook 'shell-mode-hook 'my-shell-mode-hook)
   (defun my-shell-mode-hook ()
     (setq comint-input-ring-file-name
-          (substitute-in-file-name "~/.zsh_history"))
+          (if (file-remote-p default-directory)
+              (with-parsed-tramp-file-name default-directory nil
+                (tramp-make-tramp-file-name
+                 (tramp-file-name-method v)
+                 (tramp-file-name-user v)
+                 (tramp-file-name-domain v)
+                 (tramp-file-name-host v)
+                 (tramp-file-name-port v)
+                 "~/.zsh_history"))
+            "~/.zsh_history"))
     ;; Ignore timestamps in history file.  Assumes that zsh
     ;; EXTENDED_HISTORY option is in use.
     (setq comint-input-ring-separator "\n: \\([0-9]+\\):\\([0-9]+\\);")
@@ -504,7 +513,6 @@ before packages are loaded."
   ;; This allows me to encrypt subtrees that are tagged with crypt automatically.
   ;; by default I want to encrypt it to myself. but with properties entries I cna encrypt to other people. which is useful in a shared file situation
   (require 'org-crypt)
-
   ;; Automatically re-encrypt entries on save to avoid leaking decrypted
   ;; information.
   (org-crypt-use-before-save-magic)
@@ -517,6 +525,8 @@ before packages are loaded."
   ;; This prevents the crypt tag from being included in inheritance.
   (setq org-tags-exclude-from-inheritance (quote ("crypt")))
   ;; ==================== Tramp ==============================
+  ;; Remote dir locals
+  (setq enable-remote-dir-locals t)
   ;; some speed hacks for tramp
   (setq remote-file-name-inhibit-cache nil)
   (setq vc-ignore-dir-regexp
@@ -554,11 +564,21 @@ This function is called at the very end of Spacemacs initialization."
  ;; If there is more than one, they won't work right.
  '(custom-safe-themes
    (quote
-    ("75d3dde259ce79660bac8e9e237b55674b910b470f313cdf4b019230d01a982a" "f0dc4ddca147f3c7b1c7397141b888562a48d9888f1595d69572db73be99a024" "100e7c5956d7bb3fd0eebff57fde6de8f3b9fafa056a2519f169f85199cc1c96" default)))
+    ("fe666e5ac37c2dfcf80074e88b9252c71a22b6f5d2f566df9a7aa4f9bea55ef8" "bffa9739ce0752a37d9b1eee78fc00ba159748f50dc328af4be661484848e476" "1c082c9b84449e54af757bcae23617d11f563fc9f33a832a8a2813c4d7dfb652" "6b2636879127bf6124ce541b1b2824800afc49c6ccd65439d6eb987dbf200c36" "75d3dde259ce79660bac8e9e237b55674b910b470f313cdf4b019230d01a982a" "f0dc4ddca147f3c7b1c7397141b888562a48d9888f1595d69572db73be99a024" "100e7c5956d7bb3fd0eebff57fde6de8f3b9fafa056a2519f169f85199cc1c96" default)))
  '(evil-want-Y-yank-to-eol nil)
+ '(org-agenda-files (quote ("~/Dropbox/org/kaizen.org")))
  '(package-selected-packages
    (quote
-    (org-journal web-beautify prettier-js ob-ipython neotree livid-mode json-navigator hierarchy json-mode json-snatcher json-reformat js2-refactor multiple-cursors js-doc ein skewer-mode polymode websocket js2-mode simple-httpd company-tern dash-functional tern yapfify yaml-mode xterm-color unfill smeargle shell-pop pytest pyenv-mode py-isort pippel pipenv pyvenv pip-requirements orgit org-projectile org-category-capture org-present org-pomodoro alert log4e gntp org-mime org-download org-brain mwim multi-term mmm-mode markdown-toc markdown-mode magit-svn magit-gitflow magit-popup live-py-mode importmagic epc ctable concurrent deferred htmlize helm-pydoc helm-org-rifle helm-gitignore helm-git-grep gnuplot gitignore-templates gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe+ git-gutter-fringe fringe-helper git-gutter+ git-gutter gh-md flyspell-correct-helm flyspell-correct flycheck-pos-tip pos-tip flycheck evil-org evil-magit magit transient git-commit with-editor eshell-z eshell-prompt-extras esh-help doom-themes diff-hl cython-mode company-anaconda browse-at-remote auto-dictionary anaconda-mode pythonic yasnippet-snippets helm-company helm-c-yasnippet fuzzy company-statistics company auto-yasnippet yasnippet ac-ispell auto-complete ws-butler writeroom-mode winum which-key volatile-highlights vi-tilde-fringe uuidgen use-package treemacs-projectile treemacs-evil toc-org symon string-inflection spaceline-all-the-icons restart-emacs request rainbow-delimiters popwin persp-mode pcre2el password-generator paradox overseer org-plus-contrib org-bullets open-junk-file nameless move-text macrostep lorem-ipsum link-hint indent-guide hungry-delete hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-xref helm-themes helm-swoop helm-purpose helm-projectile helm-mode-manager helm-make helm-flx helm-descbinds helm-ag google-translate golden-ratio font-lock+ flx-ido fill-column-indicator fancy-battery eyebrowse expand-region evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state evil-lion evil-indent-plus evil-iedit-state evil-goggles evil-exchange evil-escape evil-ediff evil-cleverparens evil-args evil-anzu eval-sexp-fu elisp-slime-nav editorconfig dumb-jump dotenv-mode doom-modeline diminish define-word counsel-projectile column-enforce-mode clean-aindent-mode centered-cursor-mode auto-highlight-symbol auto-compile aggressive-indent ace-link ace-jump-helm-line))))
+    (org-journal web-beautify prettier-js ob-ipython neotree livid-mode json-navigator hierarchy json-mode json-snatcher json-reformat js2-refactor multiple-cursors js-doc ein skewer-mode polymode websocket js2-mode simple-httpd company-tern dash-functional tern yapfify yaml-mode xterm-color unfill smeargle shell-pop pytest pyenv-mode py-isort pippel pipenv pyvenv pip-requirements orgit org-projectile org-category-capture org-present org-pomodoro alert log4e gntp org-mime org-download org-brain mwim multi-term mmm-mode markdown-toc markdown-mode magit-svn magit-gitflow magit-popup live-py-mode importmagic epc ctable concurrent deferred htmlize helm-pydoc helm-org-rifle helm-gitignore helm-git-grep gnuplot gitignore-templates gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe+ git-gutter-fringe fringe-helper git-gutter+ git-gutter gh-md flyspell-correct-helm flyspell-correct flycheck-pos-tip pos-tip flycheck evil-org evil-magit magit transient git-commit with-editor eshell-z eshell-prompt-extras esh-help doom-themes diff-hl cython-mode company-anaconda browse-at-remote auto-dictionary anaconda-mode pythonic yasnippet-snippets helm-company helm-c-yasnippet fuzzy company-statistics company auto-yasnippet yasnippet ac-ispell auto-complete ws-butler writeroom-mode winum which-key volatile-highlights vi-tilde-fringe uuidgen use-package treemacs-projectile treemacs-evil toc-org symon string-inflection spaceline-all-the-icons restart-emacs request rainbow-delimiters popwin persp-mode pcre2el password-generator paradox overseer org-plus-contrib org-bullets open-junk-file nameless move-text macrostep lorem-ipsum link-hint indent-guide hungry-delete hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-xref helm-themes helm-swoop helm-purpose helm-projectile helm-mode-manager helm-make helm-flx helm-descbinds helm-ag google-translate golden-ratio font-lock+ flx-ido fill-column-indicator fancy-battery eyebrowse expand-region evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state evil-lion evil-indent-plus evil-iedit-state evil-goggles evil-exchange evil-escape evil-ediff evil-cleverparens evil-args evil-anzu eval-sexp-fu elisp-slime-nav editorconfig dumb-jump dotenv-mode doom-modeline diminish define-word counsel-projectile column-enforce-mode clean-aindent-mode centered-cursor-mode auto-highlight-symbol auto-compile aggressive-indent ace-link ace-jump-helm-line)))
+ '(safe-local-variable-values
+   (quote
+    ((eval pythonic-activate "~/miniconda3/env/zlnlp")
+     (eval pyvenv-workon . "zlnlp")
+     (eval setenv "WORKON_HOME" "~/miniconda3/envs")
+     (pythonic-activate "~/miniconda3/env/zlnlp")
+     (pyvenv-workon . "zlnlp")
+     (javascript-backend . tern)
+     (javascript-backend . lsp)))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
