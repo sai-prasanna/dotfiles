@@ -48,10 +48,11 @@ This function should only modify configuration layer settings."
      git
      markdown
      multiple-cursors
+     treemacs
      ;; (treemacs :variables
      ;;           treemacs-use-follow-mode t
      ;;           treemacs-use-git-mode t)
-     neotree
+     ;;neotree
      (org :variables
           org-enable-org-journal-support t
           org-journal-dir "~/Dropbox/org/journal/"
@@ -458,6 +459,14 @@ This function is called immediately after `dotspacemacs/init', before layer
 configuration.
 It is mostly for variables that should be set before packages are loaded.
 If you are unsure, try setting them in `dotspacemacs/user-config' first."
+  (defun reset-dotfile ()
+    ;; (unless (spacemacs/set-default-font dotspacemacs-default-font)
+    ;;   (spacemacs-buffer/warning
+    ;;    "Cannot find any of the specified fonts (%s)! Font settings may not be correct."
+    ;;    (mapconcat 'car dotspacemacs-default-font ", ")))
+    (dotspacemacs/sync-configuration-layers)
+    (remove-hook 'focus-in-hook #'reset-dotfile))
+  (add-hook 'focus-in-hook #'reset-dotfile)
   )
 
 (defun dotspacemacs/user-load ()
@@ -474,9 +483,13 @@ configuration.
 Put your configuration code here, except for variables that should be set
 before packages are loaded."
 
-  ;;===================== Powerline =============================
+  ;;===================== Themes/UI ==========================
   ;;display time in powerline
   (display-time-mode 1)
+    ;; (add-hook 'after-make-frame-functions
+  ;;           (lambda (frame)
+  ;;             (select-frame frame)
+  ;;             (dotspacemacs/sync-configuration-layers)))
   ;;===================== Python =============================
   ;; Set default interpreter to ipython
   (setq python-shell-interpreter "ipython")
@@ -564,19 +577,33 @@ This function is called at the very end of Spacemacs initialization."
  ;; If there is more than one, they won't work right.
  '(custom-safe-themes
    (quote
-    ("fe666e5ac37c2dfcf80074e88b9252c71a22b6f5d2f566df9a7aa4f9bea55ef8" "bffa9739ce0752a37d9b1eee78fc00ba159748f50dc328af4be661484848e476" "1c082c9b84449e54af757bcae23617d11f563fc9f33a832a8a2813c4d7dfb652" "6b2636879127bf6124ce541b1b2824800afc49c6ccd65439d6eb987dbf200c36" "75d3dde259ce79660bac8e9e237b55674b910b470f313cdf4b019230d01a982a" "f0dc4ddca147f3c7b1c7397141b888562a48d9888f1595d69572db73be99a024" "100e7c5956d7bb3fd0eebff57fde6de8f3b9fafa056a2519f169f85199cc1c96" default)))
+    ("d2e9c7e31e574bf38f4b0fb927aaff20c1e5f92f72001102758005e53d77b8c9" "4697a2d4afca3f5ed4fdf5f715e36a6cac5c6154e105f3596b44a4874ae52c45" "6d589ac0e52375d311afaa745205abb6ccb3b21f6ba037104d71111e7e76a3fc" "bffa9739ce0752a37d9b1eee78fc00ba159748f50dc328af4be661484848e476" "d1b4990bd599f5e2186c3f75769a2c5334063e9e541e37514942c27975700370" "75d3dde259ce79660bac8e9e237b55674b910b470f313cdf4b019230d01a982a" "f0dc4ddca147f3c7b1c7397141b888562a48d9888f1595d69572db73be99a024" "100e7c5956d7bb3fd0eebff57fde6de8f3b9fafa056a2519f169f85199cc1c96" default)))
  '(evil-want-Y-yank-to-eol nil)
- '(org-agenda-files (quote ("~/Dropbox/org/kaizen.org")))
+ '(hl-todo-keyword-faces
+   (quote
+    (("TODO" . "#dc752f")
+     ("NEXT" . "#dc752f")
+     ("THEM" . "#2d9574")
+     ("PROG" . "#4f97d7")
+     ("OKAY" . "#4f97d7")
+     ("DONT" . "#f2241f")
+     ("FAIL" . "#f2241f")
+     ("DONE" . "#86dc2f")
+     ("NOTE" . "#b1951d")
+     ("KLUDGE" . "#b1951d")
+     ("HACK" . "#b1951d")
+     ("TEMP" . "#b1951d")
+     ("FIXME" . "#dc752f")
+     ("XXX" . "#dc752f")
+     ("XXXX" . "#dc752f")
+     ("???" . "#dc752f"))))
  '(package-selected-packages
    (quote
-    (org-journal web-beautify prettier-js ob-ipython neotree livid-mode json-navigator hierarchy json-mode json-snatcher json-reformat js2-refactor multiple-cursors js-doc ein skewer-mode polymode websocket js2-mode simple-httpd company-tern dash-functional tern yapfify yaml-mode xterm-color unfill smeargle shell-pop pytest pyenv-mode py-isort pippel pipenv pyvenv pip-requirements orgit org-projectile org-category-capture org-present org-pomodoro alert log4e gntp org-mime org-download org-brain mwim multi-term mmm-mode markdown-toc markdown-mode magit-svn magit-gitflow magit-popup live-py-mode importmagic epc ctable concurrent deferred htmlize helm-pydoc helm-org-rifle helm-gitignore helm-git-grep gnuplot gitignore-templates gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe+ git-gutter-fringe fringe-helper git-gutter+ git-gutter gh-md flyspell-correct-helm flyspell-correct flycheck-pos-tip pos-tip flycheck evil-org evil-magit magit transient git-commit with-editor eshell-z eshell-prompt-extras esh-help doom-themes diff-hl cython-mode company-anaconda browse-at-remote auto-dictionary anaconda-mode pythonic yasnippet-snippets helm-company helm-c-yasnippet fuzzy company-statistics company auto-yasnippet yasnippet ac-ispell auto-complete ws-butler writeroom-mode winum which-key volatile-highlights vi-tilde-fringe uuidgen use-package treemacs-projectile treemacs-evil toc-org symon string-inflection spaceline-all-the-icons restart-emacs request rainbow-delimiters popwin persp-mode pcre2el password-generator paradox overseer org-plus-contrib org-bullets open-junk-file nameless move-text macrostep lorem-ipsum link-hint indent-guide hungry-delete hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-xref helm-themes helm-swoop helm-purpose helm-projectile helm-mode-manager helm-make helm-flx helm-descbinds helm-ag google-translate golden-ratio font-lock+ flx-ido fill-column-indicator fancy-battery eyebrowse expand-region evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state evil-lion evil-indent-plus evil-iedit-state evil-goggles evil-exchange evil-escape evil-ediff evil-cleverparens evil-args evil-anzu eval-sexp-fu elisp-slime-nav editorconfig dumb-jump dotenv-mode doom-modeline diminish define-word counsel-projectile column-enforce-mode clean-aindent-mode centered-cursor-mode auto-highlight-symbol auto-compile aggressive-indent ace-link ace-jump-helm-line)))
+    (treemacs ht pfuture org-journal web-beautify prettier-js ob-ipython neotree livid-mode json-navigator hierarchy json-mode json-snatcher json-reformat js2-refactor multiple-cursors js-doc ein skewer-mode polymode websocket js2-mode simple-httpd company-tern dash-functional tern yapfify yaml-mode xterm-color unfill smeargle shell-pop pytest pyenv-mode py-isort pippel pipenv pyvenv pip-requirements orgit org-projectile org-category-capture org-present org-pomodoro alert log4e gntp org-mime org-download org-brain mwim multi-term mmm-mode markdown-toc markdown-mode magit-svn magit-gitflow magit-popup live-py-mode importmagic epc ctable concurrent deferred htmlize helm-pydoc helm-org-rifle helm-gitignore helm-git-grep gnuplot gitignore-templates gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe+ git-gutter-fringe fringe-helper git-gutter+ git-gutter gh-md flyspell-correct-helm flyspell-correct flycheck-pos-tip pos-tip flycheck evil-org evil-magit magit transient git-commit with-editor eshell-z eshell-prompt-extras esh-help doom-themes diff-hl cython-mode company-anaconda browse-at-remote auto-dictionary anaconda-mode pythonic yasnippet-snippets helm-company helm-c-yasnippet fuzzy company-statistics company auto-yasnippet yasnippet ac-ispell auto-complete ws-butler writeroom-mode winum which-key volatile-highlights vi-tilde-fringe uuidgen use-package treemacs-projectile treemacs-evil toc-org symon string-inflection spaceline-all-the-icons restart-emacs request rainbow-delimiters popwin persp-mode pcre2el password-generator paradox overseer org-plus-contrib org-bullets open-junk-file nameless move-text macrostep lorem-ipsum link-hint indent-guide hungry-delete hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-xref helm-themes helm-swoop helm-purpose helm-projectile helm-mode-manager helm-make helm-flx helm-descbinds helm-ag google-translate golden-ratio font-lock+ flx-ido fill-column-indicator fancy-battery eyebrowse expand-region evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state evil-lion evil-indent-plus evil-iedit-state evil-goggles evil-exchange evil-escape evil-ediff evil-cleverparens evil-args evil-anzu eval-sexp-fu elisp-slime-nav editorconfig dumb-jump dotenv-mode doom-modeline diminish define-word counsel-projectile column-enforce-mode clean-aindent-mode centered-cursor-mode auto-highlight-symbol auto-compile aggressive-indent ace-link ace-jump-helm-line)))
+ '(pdf-view-midnight-colors (quote ("#b2b2b2" . "#292b2e")))
  '(safe-local-variable-values
    (quote
     ((eval pythonic-activate "~/miniconda3/env/zlnlp")
-     (eval pyvenv-workon . "zlnlp")
-     (eval setenv "WORKON_HOME" "~/miniconda3/envs")
-     (pythonic-activate "~/miniconda3/env/zlnlp")
-     (pyvenv-workon . "zlnlp")
      (javascript-backend . tern)
      (javascript-backend . lsp)))))
 (custom-set-faces
