@@ -34,9 +34,9 @@ alias emacs="$EDITOR"
 # Python
 export WORKON_HOME="~/miniconda3/envs"
 
-if [[ -f /etc/profile.d/conda.sh ]]
+if [[ -f ~/miniconda3/etc/profile.d/conda.sh ]]
 then
-    source /etc/profile.d/conda.sh
+    source ~/miniconda3/etc/profile.d/conda.sh
 fi
 
 # Emacs tramp fix
