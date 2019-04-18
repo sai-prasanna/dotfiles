@@ -50,11 +50,11 @@ This function should only modify configuration layer settings."
      multiple-cursors
      treemacs
      (org :variables
+          org-directory "~/Dropbox/org/"
           org-enable-org-journal-support t
-          org-journal-enable-encryption t
-          org-journal-carryover-items t
           org-journal-dir "~/Dropbox/org/journal/"
-          org-journal-file-format "%Y-%m-%d.org"
+          org-journal-file-type "yearly"
+          org-journal-file-format "%Y.org"
           org-journal-date-prefix "* "
           org-journal-date-format "%A, %B %d %Y"
           org-journal-time-prefix "** "
@@ -68,6 +68,7 @@ This function should only modify configuration layer settings."
      syntax-checking
      version-control
      spotify
+     pdf
      )
 
    ;; List of additional packages that will be installed without being
@@ -178,7 +179,7 @@ It should only modify the values of Spacemacs settings."
    ;; directory. A string value must be a path to an image format supported
    ;; by your Emacs build.
    ;; If the value is nil then no banner is displayed. (default 'official)
-   dotspacemacs-startup-banner 'official
+   dotspacemacs-startup-banner 'random
 
    ;; List of items to show in startup buffer or an association list of
    ;; the form `(list-type . list-size)`. If nil then it is disabled.
@@ -186,8 +187,10 @@ It should only modify the values of Spacemacs settings."
    ;; `recents' `bookmarks' `projects' `agenda' `todos'.
    ;; List sizes may be nil, in which case
    ;; `spacemacs-buffer-startup-lists-length' takes effect.
-   dotspacemacs-startup-lists '((recents . 5)
-                                (projects . 7))
+   dotspacemacs-startup-lists '((agenda . 5)
+                                (todos . 3)
+                                (projects . 7)
+                                (recents . 5))
 
    ;; True if the home buffer should respond to resize events. (default t)
    dotspacemacs-startup-buffer-responsive t
@@ -515,10 +518,19 @@ before packages are loaded."
     (setq comint-input-ring-separator "\n: \\([0-9]+\\):\\([0-9]+\\);")
     (comint-read-input-ring t))
   ;;=====================  Org  ==============================
+  (setq org-capture-templates `(
+                                ("p" "Protocol" entry (file+headline ,(concat org-directory "bookmarks.org") "Inbox")
+                                 "* %^{Title}\nSource: %u, %c\n #+BEGIN_QUOTE\n%i\n#+END_QUOTE\n\n\n%?")
+                                ("L" "Protocol Link" entry (file+headline ,(concat org-directory "bookmarks.org") "Inbox")
+                                 "* %? [[%:link][%:description]] \nCaptured On: %U")
+                                ))
+  ;; Org Capture
+  (server-start)
+  (require 'org-protocol)
   ;; Copy from https://github.com/nickanderson/Level-up-your-notes-with-Org/blob/master/dot-spacemacs
   (setq org-startup-indented t)
   (setq org-todo-keywords
-        '((sequence "TODO" "WAIT" "|" "DONE" "CANCELLED" )))
+        '((sequence "TODO" "NEXT" "HOLD" "WAIT" "|" "DONE" "CANCELLED" )))
   ;; http://yenliangl.blogspot.com/2009/12/encrypt-your-important-data-in-emacs.html
   ;; http://emacs-fu.blogspot.com/2011/02/keeping-your-secrets-secret.html
   ;; This allows me to encrypt subtrees that are tagged with crypt automatically.
@@ -595,9 +607,10 @@ This function is called at the very end of Spacemacs initialization."
      ("FIXME" . "#dc752f")
      ("XXX" . "#dc752f")
      ("XXXX" . "#dc752f"))))
+ '(org-agenda-files (quote ("~/Dropbox/org/kaizen.org")))
  '(package-selected-packages
    (quote
-    (spotify helm-spotify-plus multi lsp-ui company-lsp lsp-mode treemacs ht pfuture org-journal web-beautify prettier-js ob-ipython neotree livid-mode json-navigator hierarchy json-mode json-snatcher json-reformat js2-refactor multiple-cursors js-doc ein skewer-mode polymode websocket js2-mode simple-httpd company-tern dash-functional tern yapfify yaml-mode xterm-color unfill smeargle shell-pop pytest pyenv-mode py-isort pippel pipenv pyvenv pip-requirements orgit org-projectile org-category-capture org-present org-pomodoro alert log4e gntp org-mime org-download org-brain mwim multi-term mmm-mode markdown-toc markdown-mode magit-svn magit-gitflow magit-popup live-py-mode importmagic epc ctable concurrent deferred htmlize helm-pydoc helm-org-rifle helm-gitignore helm-git-grep gnuplot gitignore-templates gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe+ git-gutter-fringe fringe-helper git-gutter+ git-gutter gh-md flyspell-correct-helm flyspell-correct flycheck-pos-tip pos-tip flycheck evil-org evil-magit magit transient git-commit with-editor eshell-z eshell-prompt-extras esh-help doom-themes diff-hl cython-mode company-anaconda browse-at-remote auto-dictionary anaconda-mode pythonic yasnippet-snippets helm-company helm-c-yasnippet fuzzy company-statistics company auto-yasnippet yasnippet ac-ispell auto-complete ws-butler writeroom-mode winum which-key volatile-highlights vi-tilde-fringe uuidgen use-package treemacs-projectile treemacs-evil toc-org symon string-inflection spaceline-all-the-icons restart-emacs request rainbow-delimiters popwin persp-mode pcre2el password-generator paradox overseer org-plus-contrib org-bullets open-junk-file nameless move-text macrostep lorem-ipsum link-hint indent-guide hungry-delete hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-xref helm-themes helm-swoop helm-purpose helm-projectile helm-mode-manager helm-make helm-flx helm-descbinds helm-ag google-translate golden-ratio font-lock+ flx-ido fill-column-indicator fancy-battery eyebrowse expand-region evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state evil-lion evil-indent-plus evil-iedit-state evil-goggles evil-exchange evil-escape evil-ediff evil-cleverparens evil-args evil-anzu eval-sexp-fu elisp-slime-nav editorconfig dumb-jump dotenv-mode doom-modeline diminish define-word counsel-projectile column-enforce-mode clean-aindent-mode centered-cursor-mode auto-highlight-symbol auto-compile aggressive-indent ace-link ace-jump-helm-line)))
+    (pdf-tools tablist counsel helm projectile spotify helm-spotify-plus multi lsp-ui company-lsp lsp-mode treemacs ht pfuture org-journal web-beautify prettier-js ob-ipython neotree livid-mode json-navigator hierarchy json-mode json-snatcher json-reformat js2-refactor multiple-cursors js-doc ein skewer-mode polymode websocket js2-mode simple-httpd company-tern dash-functional tern yapfify yaml-mode xterm-color unfill smeargle shell-pop pytest pyenv-mode py-isort pippel pipenv pyvenv pip-requirements orgit org-projectile org-category-capture org-present org-pomodoro alert log4e gntp org-mime org-download org-brain mwim multi-term mmm-mode markdown-toc markdown-mode magit-svn magit-gitflow magit-popup live-py-mode importmagic epc ctable concurrent deferred htmlize helm-pydoc helm-org-rifle helm-gitignore helm-git-grep gnuplot gitignore-templates gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe+ git-gutter-fringe fringe-helper git-gutter+ git-gutter gh-md flyspell-correct-helm flyspell-correct flycheck-pos-tip pos-tip flycheck evil-org evil-magit magit transient git-commit with-editor eshell-z eshell-prompt-extras esh-help doom-themes diff-hl cython-mode company-anaconda browse-at-remote auto-dictionary anaconda-mode pythonic yasnippet-snippets helm-company helm-c-yasnippet fuzzy company-statistics company auto-yasnippet yasnippet ac-ispell auto-complete ws-butler writeroom-mode winum which-key volatile-highlights vi-tilde-fringe uuidgen use-package treemacs-projectile treemacs-evil toc-org symon string-inflection spaceline-all-the-icons restart-emacs request rainbow-delimiters popwin persp-mode pcre2el password-generator paradox overseer org-plus-contrib org-bullets open-junk-file nameless move-text macrostep lorem-ipsum link-hint indent-guide hungry-delete hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-xref helm-themes helm-swoop helm-purpose helm-projectile helm-mode-manager helm-make helm-flx helm-descbinds helm-ag google-translate golden-ratio font-lock+ flx-ido fill-column-indicator fancy-battery eyebrowse expand-region evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state evil-lion evil-indent-plus evil-iedit-state evil-goggles evil-exchange evil-escape evil-ediff evil-cleverparens evil-args evil-anzu eval-sexp-fu elisp-slime-nav editorconfig dumb-jump dotenv-mode doom-modeline diminish define-word counsel-projectile column-enforce-mode clean-aindent-mode centered-cursor-mode auto-highlight-symbol auto-compile aggressive-indent ace-link ace-jump-helm-line)))
  '(pdf-view-midnight-colors (quote ("#b2b2b2" . "#292b2e")))
  '(safe-local-variable-values
    (quote
