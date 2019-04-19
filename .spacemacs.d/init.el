@@ -11,9 +11,7 @@ This function should only modify configuration layer settings."
    ;; or `spacemacs'. (default 'spacemacs)
    dotspacemacs-distribution 'spacemacs
 
-   ;; Lazy installation of layers (i.e. layers are installed only when a file
-   ;; with a supported type is opened). Possible value `unused'
-   ;; and `nil'. `unused' will lazy install only unused layers (i.e. layers
+   ;; Lazy installation of layers (i.e. layers `nil'. `unused' will lazy install only unused layers (i.e. layers
    ;; not listed in variable `dotspacemacs-configuration-layers'), `all' will
    ;; lazy install any layer that support lazy installation even the layers
    ;; listed in `dotspacemacs-configuration-layers'. `nil' disable the lazy
@@ -34,7 +32,8 @@ This function should only modify configuration layer settings."
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
    '(javascript
-     python
+     lsp
+     (python :variables python-backend 'lsp)
      yaml
      ;; ----------------------------------------------------------------
      ;; Example of useful layers you may want to use right away.
@@ -487,15 +486,18 @@ before packages are loaded."
   ;;===================== Themes/UI ==========================
   ;;display time in powerline
   (display-time-mode 1)
-    ;; (add-hook 'after-make-frame-functions
-  ;;           (lambda (frame)
-  ;;             (select-frame frame)
-  ;;             (dotspacemacs/sync-configuration-layers)))
   ;;===================== Python =============================
   ;; Set default interpreter to ipython
   (setq python-shell-interpreter "ipython")
   (setq python-shell-interpreter-args "--simple-prompt -i")
+  ;;lsp-mode ***************************************************************************
 
+  (require 'lsp-mode)
+  (lsp-register-client
+   (make-lsp-client :new-connection (lsp-tramp-connection "~/miniconda3/envs/znlp/bin/pyls")
+                    :major-modes '(python-mode)
+                    :remote? t
+                    :server-id 'remote-pyls))
   ;;===================== SHELL =============================
   ; Remember lots of previous commands in shell-mode
   (setq comint-input-ring-size 100000)
@@ -611,10 +613,17 @@ This function is called at the very end of Spacemacs initialization."
  '(package-selected-packages
    (quote
     (pdf-tools tablist counsel helm projectile spotify helm-spotify-plus multi lsp-ui company-lsp lsp-mode treemacs ht pfuture org-journal web-beautify prettier-js ob-ipython neotree livid-mode json-navigator hierarchy json-mode json-snatcher json-reformat js2-refactor multiple-cursors js-doc ein skewer-mode polymode websocket js2-mode simple-httpd company-tern dash-functional tern yapfify yaml-mode xterm-color unfill smeargle shell-pop pytest pyenv-mode py-isort pippel pipenv pyvenv pip-requirements orgit org-projectile org-category-capture org-present org-pomodoro alert log4e gntp org-mime org-download org-brain mwim multi-term mmm-mode markdown-toc markdown-mode magit-svn magit-gitflow magit-popup live-py-mode importmagic epc ctable concurrent deferred htmlize helm-pydoc helm-org-rifle helm-gitignore helm-git-grep gnuplot gitignore-templates gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe+ git-gutter-fringe fringe-helper git-gutter+ git-gutter gh-md flyspell-correct-helm flyspell-correct flycheck-pos-tip pos-tip flycheck evil-org evil-magit magit transient git-commit with-editor eshell-z eshell-prompt-extras esh-help doom-themes diff-hl cython-mode company-anaconda browse-at-remote auto-dictionary anaconda-mode pythonic yasnippet-snippets helm-company helm-c-yasnippet fuzzy company-statistics company auto-yasnippet yasnippet ac-ispell auto-complete ws-butler writeroom-mode winum which-key volatile-highlights vi-tilde-fringe uuidgen use-package treemacs-projectile treemacs-evil toc-org symon string-inflection spaceline-all-the-icons restart-emacs request rainbow-delimiters popwin persp-mode pcre2el password-generator paradox overseer org-plus-contrib org-bullets open-junk-file nameless move-text macrostep lorem-ipsum link-hint indent-guide hungry-delete hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-xref helm-themes helm-swoop helm-purpose helm-projectile helm-mode-manager helm-make helm-flx helm-descbinds helm-ag google-translate golden-ratio font-lock+ flx-ido fill-column-indicator fancy-battery eyebrowse expand-region evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state evil-lion evil-indent-plus evil-iedit-state evil-goggles evil-exchange evil-escape evil-ediff evil-cleverparens evil-args evil-anzu eval-sexp-fu elisp-slime-nav editorconfig dumb-jump dotenv-mode doom-modeline diminish define-word counsel-projectile column-enforce-mode clean-aindent-mode centered-cursor-mode auto-highlight-symbol auto-compile aggressive-indent ace-link ace-jump-helm-line)))
+ '(paradox-github-token t)
  '(pdf-view-midnight-colors (quote ("#b2b2b2" . "#292b2e")))
  '(safe-local-variable-values
    (quote
-    ((eval pythonic-activate "~/miniconda3/env/zlnlp")
+    ((eval setq lsp-clients-python-command
+           (quote
+            ("~/miniconda3/envs/znlp/bin/pyls")))
+     (eval setq lsp-clients-python-command
+           (quote
+            ("~/miniconda3/envs/znlp/bin")))
+     (eval pythonic-activate "/ssh:sai@zlabs-nlp:/home/sai/miniconda3/envs/znlp")
      (javascript-backend . tern)
      (javascript-backend . lsp)))))
 (custom-set-faces
