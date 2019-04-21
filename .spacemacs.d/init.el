@@ -31,8 +31,7 @@ This function should only modify configuration layer settings."
 
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
-   '(javascript
-     lsp
+   '(lsp
      (python :variables python-backend 'lsp)
      yaml
      ;; ----------------------------------------------------------------
@@ -49,15 +48,8 @@ This function should only modify configuration layer settings."
      multiple-cursors
      treemacs
      (org :variables
-          org-directory "~/Dropbox/org/"
-          org-enable-org-journal-support t
-          org-journal-dir "~/Dropbox/org/journal/"
-          org-journal-file-type "yearly"
-          org-journal-file-format "%Y.org"
-          org-journal-date-prefix "* "
-          org-journal-date-format "%A, %B %d %Y"
-          org-journal-time-prefix "** "
-          org-journal-time-format "%R")
+          org-want-todo-bindings t
+          org-enable-org-journal-support t)
      (shell :variables
             shell-default-shell 'multiterm
             shell-default-term-shell "/bin/zsh"
@@ -68,6 +60,7 @@ This function should only modify configuration layer settings."
      version-control
      spotify
      pdf
+     emoji
      )
 
    ;; List of additional packages that will be installed without being
@@ -316,7 +309,7 @@ It should only modify the values of Spacemacs settings."
 
    ;; If non-nil the frame is fullscreen when Emacs starts up. (default nil)
    ;; (Emacs 24.4+ only)
-   dotspacemacs-fullscreen-at-startup nil
+   dotspacemacs-fullscreen-at-startup t
 
    ;; If non-nil `spacemacs/toggle-fullscreen' will not use native fullscreen.
    ;; Use to disable fullscreen animations in OSX. (default nil)
@@ -459,14 +452,6 @@ This function is called immediately after `dotspacemacs/init', before layer
 configuration.
 It is mostly for variables that should be set before packages are loaded.
 If you are unsure, try setting them in `dotspacemacs/user-config' first."
-  (defun reset-dotfile ()
-    ;; (unless (spacemacs/set-default-font dotspacemacs-default-font)
-    ;;   (spacemacs-buffer/warning
-    ;;    "Cannot find any of the specified fonts (%s)! Font settings may not be correct."
-    ;;    (mapconcat 'car dotspacemacs-default-font ", ")))
-    (dotspacemacs/sync-configuration-layers)
-    (remove-hook 'focus-in-hook #'reset-dotfile))
-  (add-hook 'focus-in-hook #'reset-dotfile)
   )
 
 (defun dotspacemacs/user-load ()
@@ -491,7 +476,6 @@ before packages are loaded."
   (setq python-shell-interpreter "ipython")
   (setq python-shell-interpreter-args "--simple-prompt -i")
   ;;lsp-mode ***************************************************************************
-
   (require 'lsp-mode)
   (lsp-register-client
    (make-lsp-client :new-connection (lsp-tramp-connection "~/miniconda3/envs/znlp/bin/pyls")
@@ -500,10 +484,10 @@ before packages are loaded."
                     :server-id 'remote-pyls))
   ;;===================== SHELL =============================
   ; Remember lots of previous commands in shell-mode
-  (setq comint-input-ring-size 100000)
   (setq multi-term-program "/bin/zsh")
   (add-hook 'shell-mode-hook 'my-shell-mode-hook)
   (defun my-shell-mode-hook ()
+    (setq comint-input-ring-size 100000)
     (setq comint-input-ring-file-name
           (if (file-remote-p default-directory)
               (with-parsed-tramp-file-name default-directory nil
@@ -520,36 +504,62 @@ before packages are loaded."
     (setq comint-input-ring-separator "\n: \\([0-9]+\\):\\([0-9]+\\);")
     (comint-read-input-ring t))
   ;;=====================  Org  ==============================
+  (setq org-modules (quote (org-protocol
+                            org-crypt)))
+  (setq org-directory "~/sync/org/")
+  (setq org-default-notes-file "~/sync/org/inbox.org")
+  (setq org-startup-indented t)
+  ;; Org Journal
+  (setq org-journal-dir "~/sync/org/journal/")
+  (setq org-journal-file-type "yearly")
+  (setq org-journal-file-format "%Y.org")
+  (setq org-journal-date-prefix "* ")
+  (setq org-journal-date-format "%A, %B %d %Y")
+  (setq org-journal-time-prefix "** ")
+  (setq org-journal-time-format "%R")
+  ;; Org Crypt
+  ;; Automatically re-encrypt entries on save to avoid leaking decrypted
+  ;; information.
+  (require 'org-crypt)
+  (org-crypt-use-before-save-magic)
+  (setq org-crypt-disable-auto-save (quote encrypt))
+
+  ;; GPG key to use for encryption
+  ;; Either the Key ID or set to nil to use symmetric encryption.
+  (setq org-agenda-files
+        (list (concat org-directory "tickler.org")
+              (concat org-directory "gtd.org")
+              (concat org-directory "inbox.org")))
+  (setq org-crypt-key nil)
+
+  ;; This prevents the crypt tag from being included in inheritance.
+  (setq org-tags-exclude-from-inheritance (quote ("crypt")))
+
+  ;; Todos
+  (setq org-todo-keywords '((sequence "TODO(t)" "NEXT(n)" "WAIT(w)" "|" "DONE(d)" "CANCELLED(c)")))
+  (setq org-todo-keyword-faces
+        (quote (("TODO" :foreground "gold" :weight bold)
+                ("NEXT" :foreground "deep sky blue" :weight bold)
+                ("DONE" :foreground "green" :weight bold)
+                ("WAIT" :foreground "orange" :weight bold)
+                ("HOLD" :foreground "magenta" :weight bold)
+                ("CANCELLED" :foreground "green" :weight bold))))
+  ;; GTD
+  (setq org-refile-use-outline-path 'file)
+  (setq org-refile-targets
+        `((,(concat org-directory "gtd.org") :maxlevel . 3)
+          (,(concat org-directory "someday.org") :level . 1)
+          (,(concat org-directory "tickler.org") :maxlevel . 2)))
+  ;; Fix ht todo colours 
+  (add-hook 'org-mode-hook (lambda () (hl-todo-mode -1) nil))
+  ; Org Capture
   (setq org-capture-templates `(
                                 ("p" "Protocol" entry (file+headline ,(concat org-directory "bookmarks.org") "Inbox")
                                  "* %^{Title}\nSource: %u, %c\n #+BEGIN_QUOTE\n%i\n#+END_QUOTE\n\n\n%?")
                                 ("L" "Protocol Link" entry (file+headline ,(concat org-directory "bookmarks.org") "Inbox")
                                  "* %? [[%:link][%:description]] \nCaptured On: %U")
                                 ))
-  ;; Org Capture
   (server-start)
-  (require 'org-protocol)
-  ;; Copy from https://github.com/nickanderson/Level-up-your-notes-with-Org/blob/master/dot-spacemacs
-  (setq org-startup-indented t)
-  (setq org-todo-keywords
-        '((sequence "TODO" "NEXT" "HOLD" "WAIT" "|" "DONE" "CANCELLED" )))
-  ;; http://yenliangl.blogspot.com/2009/12/encrypt-your-important-data-in-emacs.html
-  ;; http://emacs-fu.blogspot.com/2011/02/keeping-your-secrets-secret.html
-  ;; This allows me to encrypt subtrees that are tagged with crypt automatically.
-  ;; by default I want to encrypt it to myself. but with properties entries I cna encrypt to other people. which is useful in a shared file situation
-  (require 'org-crypt)
-  ;; Automatically re-encrypt entries on save to avoid leaking decrypted
-  ;; information.
-  (org-crypt-use-before-save-magic)
-  (setq org-crypt-disable-auto-save (quote encrypt))
-
-  ;; GPG key to use for encryption
-  ;; Either the Key ID or set to nil to use symmetric encryption.
-  (setq org-crypt-key nil)
-
-  ;; This prevents the crypt tag from being included in inheritance.
-  (setq org-tags-exclude-from-inheritance (quote ("crypt")))
-
   ;; ==================== Tramp ==============================
   ;; Remote dir locals
   (setq enable-remote-dir-locals t)
@@ -609,10 +619,9 @@ This function is called at the very end of Spacemacs initialization."
      ("FIXME" . "#dc752f")
      ("XXX" . "#dc752f")
      ("XXXX" . "#dc752f"))))
- '(org-agenda-files (quote ("~/Dropbox/org/kaizen.org")))
  '(package-selected-packages
    (quote
-    (pdf-tools tablist counsel helm projectile spotify helm-spotify-plus multi lsp-ui company-lsp lsp-mode treemacs ht pfuture org-journal web-beautify prettier-js ob-ipython neotree livid-mode json-navigator hierarchy json-mode json-snatcher json-reformat js2-refactor multiple-cursors js-doc ein skewer-mode polymode websocket js2-mode simple-httpd company-tern dash-functional tern yapfify yaml-mode xterm-color unfill smeargle shell-pop pytest pyenv-mode py-isort pippel pipenv pyvenv pip-requirements orgit org-projectile org-category-capture org-present org-pomodoro alert log4e gntp org-mime org-download org-brain mwim multi-term mmm-mode markdown-toc markdown-mode magit-svn magit-gitflow magit-popup live-py-mode importmagic epc ctable concurrent deferred htmlize helm-pydoc helm-org-rifle helm-gitignore helm-git-grep gnuplot gitignore-templates gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe+ git-gutter-fringe fringe-helper git-gutter+ git-gutter gh-md flyspell-correct-helm flyspell-correct flycheck-pos-tip pos-tip flycheck evil-org evil-magit magit transient git-commit with-editor eshell-z eshell-prompt-extras esh-help doom-themes diff-hl cython-mode company-anaconda browse-at-remote auto-dictionary anaconda-mode pythonic yasnippet-snippets helm-company helm-c-yasnippet fuzzy company-statistics company auto-yasnippet yasnippet ac-ispell auto-complete ws-butler writeroom-mode winum which-key volatile-highlights vi-tilde-fringe uuidgen use-package treemacs-projectile treemacs-evil toc-org symon string-inflection spaceline-all-the-icons restart-emacs request rainbow-delimiters popwin persp-mode pcre2el password-generator paradox overseer org-plus-contrib org-bullets open-junk-file nameless move-text macrostep lorem-ipsum link-hint indent-guide hungry-delete hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-xref helm-themes helm-swoop helm-purpose helm-projectile helm-mode-manager helm-make helm-flx helm-descbinds helm-ag google-translate golden-ratio font-lock+ flx-ido fill-column-indicator fancy-battery eyebrowse expand-region evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state evil-lion evil-indent-plus evil-iedit-state evil-goggles evil-exchange evil-escape evil-ediff evil-cleverparens evil-args evil-anzu eval-sexp-fu elisp-slime-nav editorconfig dumb-jump dotenv-mode doom-modeline diminish define-word counsel-projectile column-enforce-mode clean-aindent-mode centered-cursor-mode auto-highlight-symbol auto-compile aggressive-indent ace-link ace-jump-helm-line)))
+    (znc zones web-mode tagedit slim-mode scss-mode sass-mode pug-mode impatient-mode helm-css-scss haml-mode emmet-mode counsel-css company-web web-completion-data add-node-modules-path emojify emoji-cheat-sheet-plus company-emoji pdf-tools tablist counsel helm projectile spotify helm-spotify-plus multi lsp-ui company-lsp lsp-mode treemacs ht pfuture org-journal web-beautify prettier-js ob-ipython neotree livid-mode json-navigator hierarchy json-mode json-snatcher json-reformat js2-refactor multiple-cursors js-doc ein skewer-mode polymode websocket js2-mode simple-httpd company-tern dash-functional tern yapfify yaml-mode xterm-color unfill smeargle shell-pop pytest pyenv-mode py-isort pippel pipenv pyvenv pip-requirements orgit org-projectile org-category-capture org-present org-pomodoro alert log4e gntp org-mime org-download org-brain mwim multi-term mmm-mode markdown-toc markdown-mode magit-svn magit-gitflow magit-popup live-py-mode importmagic epc ctable concurrent deferred htmlize helm-pydoc helm-org-rifle helm-gitignore helm-git-grep gnuplot gitignore-templates gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe+ git-gutter-fringe fringe-helper git-gutter+ git-gutter gh-md flyspell-correct-helm flyspell-correct flycheck-pos-tip pos-tip flycheck evil-org evil-magit magit transient git-commit with-editor eshell-z eshell-prompt-extras esh-help doom-themes diff-hl cython-mode company-anaconda browse-at-remote auto-dictionary anaconda-mode pythonic yasnippet-snippets helm-company helm-c-yasnippet fuzzy company-statistics company auto-yasnippet yasnippet ac-ispell auto-complete ws-butler writeroom-mode winum which-key volatile-highlights vi-tilde-fringe uuidgen use-package treemacs-projectile treemacs-evil toc-org symon string-inflection spaceline-all-the-icons restart-emacs request rainbow-delimiters popwin persp-mode pcre2el password-generator paradox overseer org-plus-contrib org-bullets open-junk-file nameless move-text macrostep lorem-ipsum link-hint indent-guide hungry-delete hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-xref helm-themes helm-swoop helm-purpose helm-projectile helm-mode-manager helm-make helm-flx helm-descbinds helm-ag google-translate golden-ratio font-lock+ flx-ido fill-column-indicator fancy-battery eyebrowse expand-region evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state evil-lion evil-indent-plus evil-iedit-state evil-goggles evil-exchange evil-escape evil-ediff evil-cleverparens evil-args evil-anzu eval-sexp-fu elisp-slime-nav editorconfig dumb-jump dotenv-mode doom-modeline diminish define-word counsel-projectile column-enforce-mode clean-aindent-mode centered-cursor-mode auto-highlight-symbol auto-compile aggressive-indent ace-link ace-jump-helm-line)))
  '(paradox-github-token t)
  '(pdf-view-midnight-colors (quote ("#b2b2b2" . "#292b2e")))
  '(safe-local-variable-values
