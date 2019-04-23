@@ -528,27 +528,47 @@ before packages are loaded."
   ;; Either the Key ID or set to nil to use symmetric encryption.
   (setq org-crypt-key nil)
 
+  ;; Agenda
+  (setq org-agenda-window-setup 'only-window)
+  ;; Agenda files for my custom GTD workflow
   (setq org-agenda-files
         (list (concat org-directory "tickler.org")
               (concat org-directory "gtd.org")
               (concat org-directory "inbox.org")))
+  ;; Custom Agenda commands to view NEXT and agenda with NEXT states and General agenda
   (setq org-agenda-custom-commands
-        '(("w" todo "WAITING" nil)
-          ("n" todo "NEXT" nil)
-          ("d" "Agenda + Next Actions" ((agenda) (todo "NEXT"))))
+        '(
+          ;;("g" . "GTD contexts")
+          ("a" "Agenda"
+           (;; One block with a standard agenda view
+            (agenda)
+            ;; one block of ALL tasks with todo state NEXT
+            (tags-todo "NEXT")))
+          ("o" "Office Agenda"
+           (;; One block with a standard agenda view
+            (agenda)
+            ;; one block of ALL tasks in office with todo state NEXT
+            (tags-todo "@Office/NEXT")))
+          ("h" "Home Agenda"
+           (;; One block with a standard agenda view
+            (agenda)
+            ;; one block of ALL tasks in home with todo state NEXT
+            (tags-todo "@Home/NEXT")))
+          ("c" "Computer" tags-todo "@Computer/NEXT")
+          ("r" "Read" tags-todo "@Read/NEXT")
+          ("w" todo "WAIT" nil))
         )
-
   ;; This prevents the crypt tag from being included in inheritance.
   (setq org-tags-exclude-from-inheritance (quote ("crypt")))
 
-  ;; Todos
+  ;; Todos - We are having multiple states here with the quick shortcut to trigger state
+  ;; t n will toggle NEXT
   (setq org-todo-keywords '((sequence "TODO(t)" "NEXT(n)" "WAIT(w)" "|" "DONE(d)" "CANCELLED(c)")))
   (setq org-todo-keyword-faces
         (quote (("TODO" :foreground "gold" :weight bold)
                 ("NEXT" :foreground "deep sky blue" :weight bold)
                 ("DONE" :foreground "green" :weight bold)
                 ("WAIT" :foreground "orange" :weight bold)
-                ("HOLD" :foreground "magenta" :weight bold)
                 ("CANCELLED" :foreground "green" :weight bold))))
   ;; GTD
   (setq org-refile-targets
