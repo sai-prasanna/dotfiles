@@ -535,6 +535,8 @@ before packages are loaded."
         (list (concat org-directory "tickler.org")
               (concat org-directory "gtd.org")
               (concat org-directory "inbox.org")))
+  ;; Don't show future repeats
+  (setq org-agenda-show-future-repeats 'next)
   ;; Custom Agenda commands to view NEXT and agenda with NEXT states and General agenda
   (setq org-agenda-custom-commands
         '(
@@ -561,22 +563,29 @@ before packages are loaded."
   ;; This prevents the crypt tag from being included in inheritance.
   (setq org-tags-exclude-from-inheritance (quote ("crypt")))
 
-  ;; Todos - We are having multiple states here with the quick shortcut to trigger state
-  ;; t n will toggle NEXT
+  ;; Todos
+  ;; Prettier bullets
+  (setq org-bullets-bullet-list '("■" "◆" "▲" "▶"))
+
+  ;; Keywords, use t n to set item to NEXT etc
   (setq org-todo-keywords '((sequence "TODO(t)" "NEXT(n)" "WAIT(w)" "|" "DONE(d)" "CANCELLED(c)")))
+  ;; Colors for org todo
   (setq org-todo-keyword-faces
         (quote (("TODO" :foreground "gold" :weight bold)
                 ("NEXT" :foreground "deep sky blue" :weight bold)
                 ("DONE" :foreground "green" :weight bold)
                 ("WAIT" :foreground "orange" :weight bold)
                 ("CANCELLED" :foreground "green" :weight bold))))
+  ;; Fix ht todo colours conflicting with org-todo-keyword-faces
+  (add-hook 'org-mode-hook (lambda () (hl-todo-mode -1) nil))
+  ;; Avoid setting entries as DONE when there are still sub-entries that are not
+  ;; DONE.
+  (setq org-enforce-todo-dependencies t)
   ;; GTD
   (setq org-refile-targets
-        `((,(concat org-directory "gtd.org") :maxlevel . 3)
+        `((,(concat org-directory "gtd.org") :maxlevel . 2)
           (,(concat org-directory "someday.org") :level . 1)
           (,(concat org-directory "tickler.org") :maxlevel . 2)))
-  ;; Fix ht todo colours
-  (add-hook 'org-mode-hook (lambda () (hl-todo-mode -1) nil))
   ; Org Capture
   (setq org-capture-templates `(
                                 ("i" "inbox" entry (file ,(concat org-directory "inbox.org")) "* TODO %?")
