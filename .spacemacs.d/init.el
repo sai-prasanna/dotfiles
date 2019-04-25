@@ -78,7 +78,7 @@ This function should only modify configuration layer settings."
    dotspacemacs-frozen-packages '()
 
    ;; A list of packages that will not be installed and loaded.
-   dotspacemacs-excluded-packages '(doom-sourcerer-theme)
+   dotspacemacs-excluded-packages '(exec-path-from-shell)
 
    ;; Defines the behaviour of Spacemacs when installing packages.
    ;; Possible values are `used-only', `used-but-keep-unused' and `all'.
@@ -260,7 +260,7 @@ It should only modify the values of Spacemacs settings."
 
    ;; If non-nil then the last auto saved layouts are resumed automatically upon
    ;; start. (default nil)
-   dotspacemacs-auto-resume-layouts nil
+   dotspacemacs-auto-resume-layouts t
 
    ;; If non-nil, auto-generate layout name when creating new layouts. Only has
    ;; effect when using the "jump to layout by number" commands. (default nil)
@@ -283,9 +283,8 @@ It should only modify the values of Spacemacs settings."
    ;; If non-nil, the paste transient-state is enabled. While enabled, after you
    ;; paste something, pressing `C-j' and `C-k' several times cycles through the
    ;; elements in the `kill-ring'. (default nil)
-   dotspacemacs-enable-paste-transient-state nil
-
-   ;; Which-key delay in seconds. The which-key buffer is the popup listing
+   dotspacemacs-enable-paste-transient-state t
+ ;; Which-key delay in seconds. The which-key buffer is the popup listing
    ;; the commands bound to the current keystroke sequence. (default 0.4)
    dotspacemacs-which-key-delay 0.4
 
@@ -475,13 +474,6 @@ before packages are loaded."
   ;; Set default interpreter to ipython
   (setq python-shell-interpreter "ipython")
   (setq python-shell-interpreter-args "--simple-prompt -i")
-  ;;lsp-mode ***************************************************************************
-  (require 'lsp-mode)
-  (lsp-register-client
-   (make-lsp-client :new-connection (lsp-tramp-connection "~/miniconda3/envs/znlp/bin/pyls")
-                    :major-modes '(python-mode)
-                    :remote? t
-                    :server-id 'remote-pyls))
   ;;===================== SHELL =============================
   ; Remember lots of previous commands in shell-mode
   (setq multi-term-program "/bin/zsh")
@@ -598,11 +590,7 @@ before packages are loaded."
   ;; Remote dir locals
   (setq enable-remote-dir-locals t)
   ;; some speed hacks for tramp
-  (setq remote-file-name-inhibit-cache nil)
-  (setq vc-ignore-dir-regexp
-        (format "%s\\|%s"
-                vc-ignore-dir-regexp
-                tramp-file-name-regexp))
+  (setq vc-handled-backends '(Git))
   (setq tramp-verbose 1)
   ;; Fix Git Gutter Bug in tramp mode
   (with-eval-after-load 'git-gutter+
@@ -660,7 +648,18 @@ This function is called at the very end of Spacemacs initialization."
  '(pdf-view-midnight-colors (quote ("#b2b2b2" . "#292b2e")))
  '(safe-local-variable-values
    (quote
-    ((eval setq lsp-clients-python-command
+    ((eval progn
+           (require
+            (quote lsp-mode))
+           (lsp-register-client
+            (make-lsp-client :new-connection
+                             (lsp-tramp-connection "~/miniconda3/envs/znlp/bin/pyls")
+                             :major-modes
+                             (quote
+                              (python-mode))
+                             :remote\? t :server-id
+                             (quote remote-pyls))))
+     (eval setq lsp-clients-python-command
            (quote
             ("~/miniconda3/envs/znlp/bin/pyls")))
      (eval setq lsp-clients-python-command
