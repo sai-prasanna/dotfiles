@@ -581,10 +581,10 @@ before packages are loaded."
   ; Org Capture
   (setq org-capture-templates `(
                                 ("i" "inbox" entry (file ,(concat org-directory "inbox.org")) "* TODO %?")
-                                ("p" "Protocol" entry (file+headline ,(concat org-directory "bookmarks.org") "Inbox")
-                                 "* %^{Title}\nSource: %u, %c\n #+BEGIN_QUOTE\n%i\n#+END_QUOTE\n\n\n%?")
-                                ("L" "Protocol Link" entry (file+headline ,(concat org-directory "bookmarks.org") "Inbox")
-                                 "* %? [[%:link][%:description]] \nCaptured On: %U")
+                                ("p" "Protocol" entry (file+headline ,(concat org-directory "inbox.org") "Capture")
+                                 "* TODO %^{Title}\nSource: %u, %c\n #+BEGIN_QUOTE\n%i\n#+END_QUOTE\n\n\n%?")
+                                ("L" "Protocol Link" entry (file+headline ,(concat org-directory "inbox.org") "Capture")
+                                 "* TODO %? [[%:link][%:description]] \nCaptured On: %U")
                                 ))
   ;; ==================== Tramp ==============================
   ;; Remote dir locals
