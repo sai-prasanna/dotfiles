@@ -29,7 +29,6 @@ zle -N zle-keymap-select
 export ALTERNATE_EDITOR=""
 export EDITOR="emacsclient -t -c -a="      # $EDITOR opens in terminal
 export VISUAL="emacsclient -c -a="         # $VISUAL opens in GUI mode
-alias emacs="$EDITOR"
 
 # Python
 export WORKON_HOME="~/miniconda3/envs"

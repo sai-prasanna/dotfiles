@@ -34,6 +34,7 @@ This function should only modify configuration layer settings."
    '(lsp
      (python :variables python-backend 'lsp)
      yaml
+     dap
      ;; ----------------------------------------------------------------
      ;; Example of useful layers you may want to use right away.
      ;; Uncomment some layer names and press `SPC f e R' (Vim style) or
@@ -497,6 +498,7 @@ before packages are loaded."
     (comint-read-input-ring t))
   ;;=====================  Org  ==============================
   (setq org-modules (quote (org-protocol
+                            org-habit
                             org-crypt)))
   (setq org-directory "~/sync/org/")
   (setq org-default-notes-file (concat org-directory "inbox.org"))
@@ -526,6 +528,7 @@ before packages are loaded."
   (setq org-agenda-files
         (list (concat org-directory "tickler.org")
               (concat org-directory "gtd.org")
+              (concat org-directory "habits.org")
               (concat org-directory "inbox.org")))
   ;; Don't show future repeats
   (setq org-agenda-show-future-repeats 'next)
@@ -651,12 +654,19 @@ This function is called at the very end of Spacemacs initialization."
      ("XXXX" . "#dc752f"))))
  '(package-selected-packages
    (quote
-    (web-mode tagedit slim-mode scss-mode sass-mode pug-mode impatient-mode helm-css-scss haml-mode emmet-mode company-web web-completion-data emojify emoji-cheat-sheet-plus company-emoji pandoc-mode pocket-reader erc-yt erc-view-log erc-social-graph erc-image erc-hl-nicks pdf-tools tablist counsel helm projectile spotify helm-spotify-plus multi lsp-ui company-lsp lsp-mode treemacs ht pfuture org-journal web-beautify prettier-js ob-ipython neotree livid-mode json-navigator hierarchy json-mode json-snatcher json-reformat js2-refactor multiple-cursors js-doc ein skewer-mode polymode websocket js2-mode simple-httpd company-tern dash-functional tern yapfify yaml-mode xterm-color unfill smeargle shell-pop pytest pyenv-mode py-isort pippel pipenv pyvenv pip-requirements orgit org-projectile org-category-capture org-present org-pomodoro alert log4e gntp org-mime org-download org-brain mwim multi-term mmm-mode markdown-toc markdown-mode magit-svn magit-gitflow magit-popup live-py-mode importmagic epc ctable concurrent deferred htmlize helm-pydoc helm-org-rifle helm-gitignore helm-git-grep gnuplot gitignore-templates gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe+ git-gutter-fringe fringe-helper git-gutter+ git-gutter gh-md flyspell-correct-helm flyspell-correct flycheck-pos-tip pos-tip flycheck evil-org evil-magit magit transient git-commit with-editor eshell-z eshell-prompt-extras esh-help doom-themes diff-hl cython-mode company-anaconda browse-at-remote auto-dictionary anaconda-mode pythonic yasnippet-snippets helm-company helm-c-yasnippet fuzzy company-statistics company auto-yasnippet yasnippet ac-ispell auto-complete ws-butler writeroom-mode winum which-key volatile-highlights vi-tilde-fringe uuidgen use-package treemacs-projectile treemacs-evil toc-org symon string-inflection spaceline-all-the-icons restart-emacs request rainbow-delimiters popwin persp-mode pcre2el password-generator paradox overseer org-plus-contrib org-bullets open-junk-file nameless move-text macrostep lorem-ipsum link-hint indent-guide hungry-delete hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-xref helm-themes helm-swoop helm-purpose helm-projectile helm-mode-manager helm-make helm-flx helm-descbinds helm-ag google-translate golden-ratio font-lock+ flx-ido fill-column-indicator fancy-battery eyebrowse expand-region evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state evil-lion evil-indent-plus evil-iedit-state evil-goggles evil-exchange evil-escape evil-ediff evil-cleverparens evil-args evil-anzu eval-sexp-fu elisp-slime-nav editorconfig dumb-jump dotenv-mode doom-modeline diminish define-word counsel-projectile column-enforce-mode clean-aindent-mode centered-cursor-mode auto-highlight-symbol auto-compile aggressive-indent ace-link ace-jump-helm-line)))
+    (dap-mode bui tree-mode web-mode tagedit slim-mode scss-mode sass-mode pug-mode impatient-mode helm-css-scss haml-mode emmet-mode company-web web-completion-data emojify emoji-cheat-sheet-plus company-emoji pandoc-mode pocket-reader erc-yt erc-view-log erc-social-graph erc-image erc-hl-nicks pdf-tools tablist counsel helm projectile spotify helm-spotify-plus multi lsp-ui company-lsp lsp-mode treemacs ht pfuture org-journal web-beautify prettier-js ob-ipython neotree livid-mode json-navigator hierarchy json-mode json-snatcher json-reformat js2-refactor multiple-cursors js-doc ein skewer-mode polymode websocket js2-mode simple-httpd company-tern dash-functional tern yapfify yaml-mode xterm-color unfill smeargle shell-pop pytest pyenv-mode py-isort pippel pipenv pyvenv pip-requirements orgit org-projectile org-category-capture org-present org-pomodoro alert log4e gntp org-mime org-download org-brain mwim multi-term mmm-mode markdown-toc markdown-mode magit-svn magit-gitflow magit-popup live-py-mode importmagic epc ctable concurrent deferred htmlize helm-pydoc helm-org-rifle helm-gitignore helm-git-grep gnuplot gitignore-templates gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe+ git-gutter-fringe fringe-helper git-gutter+ git-gutter gh-md flyspell-correct-helm flyspell-correct flycheck-pos-tip pos-tip flycheck evil-org evil-magit magit transient git-commit with-editor eshell-z eshell-prompt-extras esh-help doom-themes diff-hl cython-mode company-anaconda browse-at-remote auto-dictionary anaconda-mode pythonic yasnippet-snippets helm-company helm-c-yasnippet fuzzy company-statistics company auto-yasnippet yasnippet ac-ispell auto-complete ws-butler writeroom-mode winum which-key volatile-highlights vi-tilde-fringe uuidgen use-package treemacs-projectile treemacs-evil toc-org symon string-inflection spaceline-all-the-icons restart-emacs request rainbow-delimiters popwin persp-mode pcre2el password-generator paradox overseer org-plus-contrib org-bullets open-junk-file nameless move-text macrostep lorem-ipsum link-hint indent-guide hungry-delete hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-xref helm-themes helm-swoop helm-purpose helm-projectile helm-mode-manager helm-make helm-flx helm-descbinds helm-ag google-translate golden-ratio font-lock+ flx-ido fill-column-indicator fancy-battery eyebrowse expand-region evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state evil-lion evil-indent-plus evil-iedit-state evil-goggles evil-exchange evil-escape evil-ediff evil-cleverparens evil-args evil-anzu eval-sexp-fu elisp-slime-nav editorconfig dumb-jump dotenv-mode doom-modeline diminish define-word counsel-projectile column-enforce-mode clean-aindent-mode centered-cursor-mode auto-highlight-symbol auto-compile aggressive-indent ace-link ace-jump-helm-line)))
  '(paradox-github-token t)
  '(pdf-view-midnight-colors (quote ("#b2b2b2" . "#292b2e")))
  '(safe-local-variable-values
    (quote
-    ((eval progn
+    ((eval pythonic-activate "/home/sai/miniconda3/envs/fedg")
+     (eval pythonic-activate "/home/sai/miniconda3/envs/fedg/")
+     (eval pythonic-activate "~/miniconda3/envs/fedg/")
+     (eval setq lsp-clients-python-command
+           (quote
+            ("~/miniconda3/envs/fedg/bin/pyls")))
+     (eval pythonic-activate "~/miniconda3/envs/fedg")
+     (eval progn
            (require
             (quote lsp-mode))
            (lsp-register-client
