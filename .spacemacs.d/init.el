@@ -499,7 +499,7 @@ before packages are loaded."
   (setq org-modules (quote (org-protocol
                             org-crypt)))
   (setq org-directory "~/sync/org/")
-  (setq org-default-notes-file "~/sync/org/inbox.org")
+  (setq org-default-notes-file (concat org-directory "inbox.org"))
   (setq org-startup-indented t)
   ;; Org Journal
   (setq org-journal-dir "~/sync/org/journal/")
@@ -577,17 +577,22 @@ before packages are loaded."
   ;; DONE.
   (setq org-enforce-todo-dependencies t)
   ;; GTD
+  ;; Refile = https://blog.aaronbieber.com/2017/03/19/organizing-notes-with-refile.html
+  (setq org-refile-use-outline-path 'file)
+  ;; Allow refiling to nodes when outline-path 'file is set
+  (setq org-outline-path-complete-in-steps nil)
+  (setq org-refile-allow-creating-parent-nodes 'confirm)
   (setq org-refile-targets
         `((,(concat org-directory "gtd.org") :maxlevel . 2)
           (,(concat org-directory "someday.org") :level . 1)
           (,(concat org-directory "tickler.org") :maxlevel . 2)))
   ; Org Capture
   (setq org-capture-templates `(
-                                ("i" "inbox" entry (file ,(concat org-directory "inbox.org")) "* TODO %?")
-                                ("p" "Protocol" entry (file+headline ,(concat org-directory "bookmarks.org") "Web Capture")
-                                 "* TODO %^{Title}\nSource: %u, %c\n #+BEGIN_QUOTE\n%i\n#+END_QUOTE\n\n\n%?")
-                                ("L" "Protocol Link" entry (file+headline ,(concat org-directory "bookmarks.org") "Web Capture")
-                                 "* TODO %? [[%:link][%:description]] \nCaptured On: %U")
+                                ("i" "inbox" entry (file ,(concat org-directory "inbox.org")) "* %?")
+                                ("p" "Protocol" entry (file+headline ,(concat org-directory "inbox.org") "Capture")
+                                 "* %^{Title}\nSource: %u, %c\n #+BEGIN_QUOTE\n%i\n#+END_QUOTE\n\n\n%?")
+                                ("L" "Protocol Link" entry (file+headline ,(concat org-directory "inbox.org") "Capture")
+                                 "* %? [[%:link][%:description]] \nCaptured On: %U")
                                 ))
   ;; ==================== Tramp ==============================
   ;; Remote dir locals
