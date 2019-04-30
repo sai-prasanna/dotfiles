@@ -260,7 +260,7 @@ It should only modify the values of Spacemacs settings."
 
    ;; If non-nil then the last auto saved layouts are resumed automatically upon
    ;; start. (default nil)
-   dotspacemacs-auto-resume-layouts t
+   dotspacemacs-auto-resume-layouts nil
 
    ;; If non-nil, auto-generate layout name when creating new layouts. Only has
    ;; effect when using the "jump to layout by number" commands. (default nil)
@@ -537,7 +537,7 @@ before packages are loaded."
            (;; One block with a standard agenda view
             (agenda)
             ;; one block of ALL tasks with todo state NEXT
-            (tags-todo "NEXT")))
+            (todo "NEXT")))
           ("o" "Office Agenda"
            (;; One block with a standard agenda view
             (agenda)
@@ -554,6 +554,9 @@ before packages are loaded."
         )
   ;; This prevents the crypt tag from being included in inheritance.
   (setq org-tags-exclude-from-inheritance (quote ("crypt")))
+
+  ;; Log to drawer
+  (setq org-log-into-drawer t)
 
   ;; Todos
   ;; Prettier bullets
@@ -581,10 +584,10 @@ before packages are loaded."
   ; Org Capture
   (setq org-capture-templates `(
                                 ("i" "inbox" entry (file ,(concat org-directory "inbox.org")) "* TODO %?")
-                                ("p" "Protocol" entry (file+headline ,(concat org-directory "bookmarks.org") "Inbox")
-                                 "* %^{Title}\nSource: %u, %c\n #+BEGIN_QUOTE\n%i\n#+END_QUOTE\n\n\n%?")
-                                ("L" "Protocol Link" entry (file+headline ,(concat org-directory "bookmarks.org") "Inbox")
-                                 "* %? [[%:link][%:description]] \nCaptured On: %U")
+                                ("p" "Protocol" entry (file+headline ,(concat org-directory "bookmarks.org") "Web Capture")
+                                 "* TODO %^{Title}\nSource: %u, %c\n #+BEGIN_QUOTE\n%i\n#+END_QUOTE\n\n\n%?")
+                                ("L" "Protocol Link" entry (file+headline ,(concat org-directory "bookmarks.org") "Web Capture")
+                                 "* TODO %? [[%:link][%:description]] \nCaptured On: %U")
                                 ))
   ;; ==================== Tramp ==============================
   ;; Remote dir locals
