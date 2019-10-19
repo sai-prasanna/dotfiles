@@ -511,7 +511,7 @@ before packages are loaded."
   (setq org-modules (quote (org-protocol
                             org-habit
                             org-crypt)))
-  (setq org-directory "~/sync/org/")
+  (setq org-directory "~/Dropbox/org/")
   (setq org-default-notes-file (concat org-directory "inbox.org"))
   (setq org-startup-indented t)
   ;; Org Journal
