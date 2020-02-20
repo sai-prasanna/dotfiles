@@ -31,8 +31,7 @@ This function should only modify configuration layer settings."
 
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
-   '(javascript
-     jsonnet
+   '(jsonnet
      lsp
      (python :variables python-backend 'lsp)
      yaml
@@ -53,6 +52,7 @@ This function should only modify configuration layer settings."
      (org :variables
           org-want-todo-bindings t
           org-enable-org-journal-support t)
+     deft
      (shell :variables
             shell-default-shell 'multiterm
             shell-default-term-shell "/bin/zsh"
@@ -75,6 +75,9 @@ This function should only modify configuration layer settings."
    ;; Also include the dependencies as they will not be resolved automatically.
    dotspacemacs-additional-packages '(
                                       doom-themes
+                                      (org-roam :location (recipe :fetcher github
+                                                                  :repo "jethrokuan/org-roam"
+                                                                  :branch "develop"))
                                       )
 
    ;; A list of packages that cannot be updated.
@@ -472,12 +475,12 @@ Put your configuration code here, except for variables that should be set
 before packages are loaded."
   ;;===================== Issue fixes temporary ==========================
   ;; Fix minibuffer evil stuck in search
-  (defun kill-minibuffer ()
-    (interactive)
-    (when (windowp (active-minibuffer-window))
-      (evil-ex-search-exit)))
+  ;; (defun kill-minibuffer ()
+  ;;   (interactive)
+  ;;   (when (windowp (active-minibuffer-window))
+  ;;     (evil-ex-search-exit)))
 
-  (add-hook 'mouse-leave-buffer-hook #'kill-minibuffer)
+  ;; (add-hook 'mouse-leave-buffer-hook #'kill-minibuffer)
 
   ;;===================== Themes/UI ==========================
   ;;display time in powerline
@@ -515,13 +518,18 @@ before packages are loaded."
   (setq org-default-notes-file (concat org-directory "inbox.org"))
   (setq org-startup-indented t)
   ;; Org Journal
-  (setq org-journal-dir (concat org-directory "journal/"))
-  (setq org-journal-file-type "yearly")
-  (setq org-journal-file-format "%Y.org")
-  (setq org-journal-date-prefix "* ")
-  (setq org-journal-date-format "%A, %B %d %Y")
-  (setq org-journal-time-prefix "** ")
-  (setq org-journal-time-format "%R")
+  (use-package org-journal
+    :bind
+    ("C-c n j" . org-journal-new-entry)
+    ("C-c n t" . org-journal-today)
+    :custom
+    (org-journal-date-prefix "#+TITLE: ")
+    (org-journal-file-format "%Y-%m-%d.org")
+    (org-journal-dir (concat org-directory "/journal/"))
+    :config
+    (defun org-journal-today ()
+      (interactive)
+      (org-journal-new-entry t)))
   ;; Org Crypt
   ;; Automatically re-encrypt entries on save to avoid leaking decrypted
   ;; information.
@@ -536,10 +544,10 @@ before packages are loaded."
   ;; Agenda
   ;; Agenda files for my custom GTD workflow
   (setq org-agenda-files
-        (list (concat org-directory "tickler.org")
-              (concat org-directory "gtd.org")
-              (concat org-directory "habits.org")
-              (concat org-directory "inbox.org")))
+        (list (concat org-directory "/gtd/tickler.org")
+              (concat org-directory "/gtd/gtd.org")
+              (concat org-directory "/gtd/habits.org")
+              (concat org-directory "/gtd/inbox.org")))
   ;; Don't show future repeats
   (setq org-agenda-show-future-repeats 'next)
   ;; Custom Agenda commands to view NEXT and agenda with NEXT states and General agenda
@@ -600,13 +608,39 @@ before packages are loaded."
           (,(concat org-directory "someday.org") :level . 1)
           (,(concat org-directory "tickler.org") :maxlevel . 2)))
   ; Org Capture
+  (require 'org-protocol)
   (setq org-capture-templates `(
                                 ("i" "inbox" entry (file ,(concat org-directory "inbox.org")) "* %?")
+                                ("n" "notes" entry (file ,(concat org-directory "notes.org")) "* %?")
                                 ("p" "Protocol" entry (file+headline ,(concat org-directory "inbox.org") "Capture")
                                  "* %^{Title}\nSource: %u, %c\n #+BEGIN_QUOTE\n%i\n#+END_QUOTE\n\n\n%?")
                                 ("L" "Protocol Link" entry (file+headline ,(concat org-directory "inbox.org") "Capture")
                                  "* %? [[%:link][%:description]] \nCaptured On: %U")
                                 ))
+  ;; ==================== Roam ===============================
+  (use-package org-roam
+    :after org
+    :hook
+    ((org-mode . org-roam-mode)
+     (after-init . org-roam--build-cache-async)
+     )
+    :custom
+    (org-roam-directory org-directory)
+    (org-roam-link-title-format "R:%s")
+    (org-roam-filename-noconfirm nil)
+    :bind
+    ("C-c n l" . org-roam)
+    ("C-c n t" . org-roam-today)
+    ("C-c n f" . org-roam-find-file)
+    ("C-c n i" . org-roam-insert)
+    ("C-c n g" . org-roam-show-graph))
+  ;; ==================== Deft ==============================
+  (setq deft-directory org-directory)
+  (setq deft-extensions '("org" "md" "txt"))
+  (setq deft-default-extension "org")
+  (setq deft-recursive t)
+  (setq deft-use-filename-as-title nil)
+  (setq deft-use-filter-string-for-filename t)
   ;; ==================== Tramp ==============================
   ;; Remote dir locals
   (setq enable-remote-dir-locals t)
@@ -664,7 +698,7 @@ This function is called at the very end of Spacemacs initialization."
      ("XXXX" . "#dc752f"))))
  '(package-selected-packages
    (quote
-    (jsonnet-mode import-js grizzl helm-gtags ggtags counsel-gtags add-node-modules-path dap-mode bui tree-mode web-mode tagedit slim-mode scss-mode sass-mode pug-mode impatient-mode helm-css-scss haml-mode emmet-mode company-web web-completion-data emojify emoji-cheat-sheet-plus company-emoji pandoc-mode pocket-reader erc-yt erc-view-log erc-social-graph erc-image erc-hl-nicks pdf-tools tablist counsel helm projectile spotify helm-spotify-plus multi lsp-ui company-lsp lsp-mode treemacs ht pfuture org-journal web-beautify prettier-js ob-ipython neotree livid-mode json-navigator hierarchy json-mode json-snatcher json-reformat js2-refactor multiple-cursors js-doc ein skewer-mode polymode websocket js2-mode simple-httpd company-tern dash-functional tern yapfify yaml-mode xterm-color unfill smeargle shell-pop pytest pyenv-mode py-isort pippel pipenv pyvenv pip-requirements orgit org-projectile org-category-capture org-present org-pomodoro alert log4e gntp org-mime org-download org-brain mwim multi-term mmm-mode markdown-toc markdown-mode magit-svn magit-gitflow magit-popup live-py-mode importmagic epc ctable concurrent deferred htmlize helm-pydoc helm-org-rifle helm-gitignore helm-git-grep gnuplot gitignore-templates gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe+ git-gutter-fringe fringe-helper git-gutter+ git-gutter gh-md flyspell-correct-helm flyspell-correct flycheck-pos-tip pos-tip flycheck evil-org evil-magit magit transient git-commit with-editor eshell-z eshell-prompt-extras esh-help doom-themes diff-hl cython-mode company-anaconda browse-at-remote auto-dictionary anaconda-mode pythonic yasnippet-snippets helm-company helm-c-yasnippet fuzzy company-statistics company auto-yasnippet yasnippet ac-ispell auto-complete ws-butler writeroom-mode winum which-key volatile-highlights vi-tilde-fringe uuidgen use-package treemacs-projectile treemacs-evil toc-org symon string-inflection spaceline-all-the-icons restart-emacs request rainbow-delimiters popwin persp-mode pcre2el password-generator paradox overseer org-plus-contrib org-bullets open-junk-file nameless move-text macrostep lorem-ipsum link-hint indent-guide hungry-delete hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-xref helm-themes helm-swoop helm-purpose helm-projectile helm-mode-manager helm-make helm-flx helm-descbinds helm-ag google-translate golden-ratio font-lock+ flx-ido fill-column-indicator fancy-battery eyebrowse expand-region evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state evil-lion evil-indent-plus evil-iedit-state evil-goggles evil-exchange evil-escape evil-ediff evil-cleverparens evil-args evil-anzu eval-sexp-fu elisp-slime-nav editorconfig dumb-jump dotenv-mode doom-modeline diminish define-word counsel-projectile column-enforce-mode clean-aindent-mode centered-cursor-mode auto-highlight-symbol auto-compile aggressive-indent ace-link ace-jump-helm-line)))
+    (treemacs-persp magit-section org-roam deft utop tuareg caml seeing-is-believing rvm ruby-tools ruby-test-mode ruby-refactor ruby-hash-syntax rubocopfmt rubocop rspec-mode robe rjsx-mode rbenv rake ocp-indent ob-elixir mvn minitest meghanada maven-test-mode lsp-java groovy-mode groovy-imports pcache gradle-mode flycheck-ocaml merlin flycheck-mix flycheck-credo dune chruby bundler inf-ruby auto-complete-rst alchemist elixir-mode jsonnet-mode import-js grizzl helm-gtags ggtags counsel-gtags add-node-modules-path dap-mode bui tree-mode web-mode tagedit slim-mode scss-mode sass-mode pug-mode impatient-mode helm-css-scss haml-mode emmet-mode company-web web-completion-data emojify emoji-cheat-sheet-plus company-emoji pandoc-mode pocket-reader erc-yt erc-view-log erc-social-graph erc-image erc-hl-nicks pdf-tools tablist counsel helm projectile spotify helm-spotify-plus multi lsp-ui company-lsp lsp-mode treemacs ht pfuture org-journal web-beautify prettier-js ob-ipython neotree livid-mode json-navigator hierarchy json-mode json-snatcher json-reformat js2-refactor multiple-cursors js-doc ein skewer-mode polymode websocket js2-mode simple-httpd company-tern dash-functional tern yapfify yaml-mode xterm-color unfill smeargle shell-pop pytest pyenv-mode py-isort pippel pipenv pyvenv pip-requirements orgit org-projectile org-category-capture org-present org-pomodoro alert log4e gntp org-mime org-download org-brain mwim multi-term mmm-mode markdown-toc markdown-mode magit-svn magit-gitflow magit-popup live-py-mode importmagic epc ctable concurrent deferred htmlize helm-pydoc helm-org-rifle helm-gitignore helm-git-grep gnuplot gitignore-templates gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe+ git-gutter-fringe fringe-helper git-gutter+ git-gutter gh-md flyspell-correct-helm flyspell-correct flycheck-pos-tip pos-tip flycheck evil-org evil-magit magit transient git-commit with-editor eshell-z eshell-prompt-extras esh-help doom-themes diff-hl cython-mode company-anaconda browse-at-remote auto-dictionary anaconda-mode pythonic yasnippet-snippets helm-company helm-c-yasnippet fuzzy company-statistics company auto-yasnippet yasnippet ac-ispell auto-complete ws-butler writeroom-mode winum which-key volatile-highlights vi-tilde-fringe uuidgen use-package treemacs-projectile treemacs-evil toc-org symon string-inflection spaceline-all-the-icons restart-emacs request rainbow-delimiters popwin persp-mode pcre2el password-generator paradox overseer org-plus-contrib org-bullets open-junk-file nameless move-text macrostep lorem-ipsum link-hint indent-guide hungry-delete hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-xref helm-themes helm-swoop helm-purpose helm-projectile helm-mode-manager helm-make helm-flx helm-descbinds helm-ag google-translate golden-ratio font-lock+ flx-ido fill-column-indicator fancy-battery eyebrowse expand-region evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state evil-lion evil-indent-plus evil-iedit-state evil-goggles evil-exchange evil-escape evil-ediff evil-cleverparens evil-args evil-anzu eval-sexp-fu elisp-slime-nav editorconfig dumb-jump dotenv-mode doom-modeline diminish define-word counsel-projectile column-enforce-mode clean-aindent-mode centered-cursor-mode auto-highlight-symbol auto-compile aggressive-indent ace-link ace-jump-helm-line)))
  '(paradox-github-token t)
  '(pdf-view-midnight-colors (quote ("#b2b2b2" . "#292b2e")))
  '(safe-local-variable-values
