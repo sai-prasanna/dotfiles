@@ -627,8 +627,9 @@ before packages are loaded."
      )
     :custom
     (org-roam-directory org-directory)
-    (org-roam-link-title-format "R:%s")
+    (org-roam-link-title-format "§%s")
     (org-roam-filename-noconfirm nil)
+    (org-roam-new-file-directory (concat org-directory "/notes/"))
     :bind
     ("C-c n l" . org-roam)
     ("C-c n t" . org-roam-today)
