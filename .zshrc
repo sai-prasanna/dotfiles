@@ -12,8 +12,8 @@ export LANG=en_US.UTF-8
 export LC_CTYPE=en_US.UTF-8
 export LC_ALL=en_US.UTF-8
 
-zle -N zle-line-init
-zle -N zle-keymap-select
+# zle -N zle-line-init
+# zle -N zle-keymap-select
 
 # Editors - All Hail Emacs
 export ALTERNATE_EDITOR=""

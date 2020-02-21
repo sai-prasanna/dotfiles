@@ -524,6 +524,7 @@ before packages are loaded."
     ("C-c n t" . org-journal-today)
     :custom
     (org-journal-date-prefix "#+TITLE: ")
+    (org-journal-date-format "%A, %d %B %Y")
     (org-journal-file-format "%Y-%m-%d.org")
     (org-journal-dir (concat org-directory "/journal/"))
     :config
